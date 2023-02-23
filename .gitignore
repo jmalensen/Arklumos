@@ -18,7 +18,6 @@ Arklumos/vendor/
 .vscode/tasks.json
 
 #Ignore CMakeLists.txt because it's dependant on OS
-CMakeLists.txt
 CMakeCache.txt
 
 #Ignore Mac specific files if any

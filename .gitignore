@@ -1,0 +1,25 @@
+#Ignore build and lib dirs
+_old
+build
+lib/*
+
+#Ignore executables
+bin
+
+#Ignore dependencies
+dependencies
+
+Arklumos/vendor/
+
+#Ignore settings for .vscode because it's dependant on OS
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/settings.json
+.vscode/tasks.json
+
+#Ignore CMakeLists.txt because it's dependant on OS
+CMakeLists.txt
+CMakeCache.txt
+
+#Ignore Mac specific files if any
+.DS_Store

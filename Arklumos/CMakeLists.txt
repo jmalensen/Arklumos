@@ -14,6 +14,8 @@ enable_testing()
 # include_directories(vendor/spdlog/include)
 # link_directories(vendor/spdlog/include)
 
+add_definitions(-DAK_BUILD_DLL)
+
 # Set source files
 set(SOURCES
     src/Arklumos/Application.cpp

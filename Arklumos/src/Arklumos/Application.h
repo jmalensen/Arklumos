@@ -8,7 +8,7 @@
 namespace Arklumos
 {
 
-	class EXP_ARKLUMOS_API Application
+	class ARKLUMOS_API Application
 	{
 	public:
 		Application();

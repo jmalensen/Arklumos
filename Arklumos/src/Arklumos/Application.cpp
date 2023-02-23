@@ -14,7 +14,7 @@ namespace Arklumos
 	{
 		while (true)
 		{
-			std::cout << "Work!!" << std::endl;
+			// std::cout << "Work!!" << std::endl;
 		}
 	}
 

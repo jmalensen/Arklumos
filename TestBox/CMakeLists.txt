@@ -16,12 +16,12 @@ add_subdirectory(../Arklumos ${Arklumos_BUILD_DIR})
 
 # Set include directories
 include_directories(
-	# ../vendor/spdlog/include
+	../Arklumos/vendor/spdlog/include
 	../Arklumos
 )
 message(${CMAKE_BINARY_DIR})
 
-# link_directories("../vendor/spdlog/include")
+#link_directories("../Arklumos/vendor/spdlog/include")
 link_directories("../Arklumos")
 
 # puts all .cpp files inside src to the SRC_FILES variable

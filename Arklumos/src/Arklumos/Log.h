@@ -3,12 +3,19 @@
 #include <memory>
 
 #include "Core.h"
-#include "spdlog/spdlog.h"
+
+// This ignores all warnings raised inside External headers
+#pragma warning(push, 0)
+#include <spdlog/spdlog.h>
+#pragma warning(pop)
+
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 namespace Arklumos
 {
 
-	class IMP_ARKLUMOS_API Log
+	class ARKLUMOS_API Log
 	{
 	public:
 		static void Init();

@@ -22,3 +22,5 @@ CMakeCache.txt
 
 #Ignore Mac specific files if any
 .DS_Store
+
+Arklumos-engine.code-workspace

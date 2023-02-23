@@ -3,12 +3,14 @@
 			{
 					"name": "Win32_mingw64",
 					"includePath": [
+							"../vendor/spdlog/include",
 							"${workspaceFolder}/**"
 					],
 					"defines": [
 							"_DEBUG",
 							"UNICODE",
-							"_UNICODE"
+							"_UNICODE",
+							"DAK_BUILD_DLL"
 					],
 					"compilerPath": "C:\\Devc++\\mingw64\\bin\\g++.exe",
 					"cStandard": "c17",

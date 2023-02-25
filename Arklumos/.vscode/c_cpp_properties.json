@@ -10,6 +10,7 @@
 							"_DEBUG",
 							"UNICODE",
 							"_UNICODE",
+							"DAK_PLATFORM_WINDOWS",
 							"DAK_BUILD_DLL"
 					],
 					"compilerPath": "C:\\Devc++\\mingw64\\bin\\g++.exe",

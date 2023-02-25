@@ -5,6 +5,7 @@ lib/*
 
 #Ignore executables
 bin
+bin-int
 
 #Ignore dependencies
 dependencies
@@ -24,3 +25,5 @@ CMakeCache.txt
 .DS_Store
 
 Arklumos-engine.code-workspace
+
+Makefile

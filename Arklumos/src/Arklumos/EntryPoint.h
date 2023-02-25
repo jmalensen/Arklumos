@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "Log.h"
 
-// #ifdef AK_PLATFORM_WINDOWS
+#ifdef AK_PLATFORM_WINDOWS
 
 extern Arklumos::Application *Arklumos::CreateApplication();
 
@@ -19,4 +19,4 @@ int main(int argc, char **argv)
 	delete app;
 }
 
-// #endif
+#endif

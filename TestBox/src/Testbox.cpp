@@ -1,5 +1,5 @@
-#include "../../Arklumos/src/Arklumos.h"
-// #include <Arklumos.h>
+// #include "../../Arklumos/src/Arklumos.h"
+#include <Arklumos.h>
 
 class Testbox : public Arklumos::Application
 {

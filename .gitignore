@@ -10,7 +10,7 @@ bin-int
 #Ignore dependencies
 dependencies
 
-Arklumos/vendor/
+#Arklumos/vendor/spdlog
 
 #Ignore settings for .vscode because it's dependant on OS
 .vscode/c_cpp_properties.json

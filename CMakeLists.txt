@@ -23,6 +23,16 @@ endif()
 
 # Add include directories for the Arklumos library
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/spdlog/include)
+
+# Add Glfw to Arklumos
+# When including GLFW as part of your build, you probably don't want to build the GLFW tests, examples and documentation. To disable these, set the corresponding cache variables before adding the GLFW source tree.
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW/include)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW)
+
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/src)
 
 ## ARKLUMOS LIB PART
@@ -37,12 +47,19 @@ file(GLOB_RECURSE SRC_FILES
 # (apparently, after test if SHARED is not used CMake is failing :/)
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
+# Link the Arklumos dll with the glfw library
+# (as we are using Windows with mingw64, we need also opengl32 gdi32)
+target_link_libraries(${PROJECT_NAME} glfw opengl32 gdi32)
+
+# Set the precompiled header file and include it in the Arklumos
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Arklumos/src/akpch.h)
+
 # Set the output directory for the Arklumos library
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" OUTPUT_NAME "Arklumos")
 
 # Define macros for the Arklumos library
 # (here to specify it's for windows and to build a dll)
-target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS)
+target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_ENABLE_ASSERTS)
 
 
 ## TESTBOX PART

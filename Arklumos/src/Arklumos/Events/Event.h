@@ -66,7 +66,9 @@ namespace Arklumos
 		friend class EventDispatcher;
 
 	public:
-		// When it's virtual, require implementation later
+		bool Handled = false;
+
+		// When it's virtual, require implementation later ;)
 		virtual EventType GetEventType() const = 0;
 		virtual const char *GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
@@ -81,11 +83,10 @@ namespace Arklumos
 		{
 			return GetCategoryFlags() & category;
 		}
-
-	protected:
-		bool m_Handled = false;
 	};
 
+	// The purpose of this class is to dispatch events to event handlers
+	// using template metaprogramming = allow dispatching of different kinds of events
 	class EventDispatcher
 	{
 		template <typename T>
@@ -98,11 +99,16 @@ namespace Arklumos
 		}
 
 		template <typename T>
+		/* The Dispatch function is a template function that takes a function object of type EventFn<T>, where T is a type derived from the Event class
+			If the type of the event matches the static type of T, the function object is called with a casted Event object of type T.
+			The result of the function is stored in the Handled member of the Event object, and the function returns true.
+			If the event types do not match, the function returns false.
+		*/
 		bool Dispatch(EventFn<T> func)
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.m_Handled = func(*(T *)&m_Event);
+				m_Event.Handled = func(*(T *)&m_Event);
 				return true;
 			}
 			return false;
@@ -112,6 +118,10 @@ namespace Arklumos
 		Event &m_Event;
 	};
 
+	/* The operator<< function is defined outside of the EventDispatcher class and provides a way to output an Event object to an std::ostream.
+		It uses the ToString member function of the Event class to convert the event to a string and outputs it to the std::ostream.
+		This operator overload is used for debugging purposes, and it makes it easy to print out the contents of an Event object to the console.
+	*/
 	inline std::ostream &operator<<(std::ostream &os, const Event &e)
 	{
 		return os << e.ToString();

@@ -5,6 +5,7 @@ namespace Arklumos
 
 	static bool s_GLFWInitialized = false;
 
+	// Static function which is used as a callback function to handle GLFW errors
 	static void GLFWErrorCallback(int error, const char *description)
 	{
 		AK_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
@@ -43,6 +44,11 @@ namespace Arklumos
 			s_GLFWInitialized = true;
 		}
 
+		/*
+			GLFW window is created with the specified properties.
+			The context is then made current, and the window user pointer is set to the data associated with the window.
+			The vertical sync is enabled by calling the SetVSync function.
+		*/
 		this->m_p_Window = glfwCreateWindow((int)props.Width, (int)props.Height, this->m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(this->m_p_Window);
 		glfwSetWindowUserPointer(this->m_p_Window, &this->m_Data);
@@ -50,6 +56,7 @@ namespace Arklumos
 
 		/// Set GLFW callbacks
 		// Listen event window size
+		// function sets the callback for resizing the window, which updates the WindowData struct associated with the window and calls the WindowResizeEvent event
 		glfwSetWindowSizeCallback(this->m_p_Window, [](GLFWwindow *window, int width, int height)
 															{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -60,6 +67,7 @@ namespace Arklumos
 			data.EventCallback(event); });
 
 		// Listen event window close
+		// function sets the callback for closing the window, which creates a WindowCloseEvent event
 		glfwSetWindowCloseCallback(this->m_p_Window, [](GLFWwindow *window)
 															 {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -67,6 +75,7 @@ namespace Arklumos
 			data.EventCallback(event); });
 
 		// Listen event keypress / keyrelease
+		// function sets the callback for key presses and releases, which creates either a KeyPressedEvent or a KeyReleasedEvent event depending on the action
 		glfwSetKeyCallback(this->m_p_Window, [](GLFWwindow *window, int key, int scancode, int action, int mods)
 											 {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -94,6 +103,7 @@ namespace Arklumos
 			} });
 
 		// Listen event mousebutton pressed / released
+		// function sets the callback for mouse button presses and releases, which creates either a MouseButtonPressedEvent or a MouseButtonReleasedEvent event depending on the action
 		glfwSetMouseButtonCallback(this->m_p_Window, [](GLFWwindow *window, int button, int action, int mods)
 															 {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -115,6 +125,7 @@ namespace Arklumos
 			} });
 
 		// Listen event mouse scroll
+		// function sets the callback for mouse scrolling, which creates a MouseScrolledEvent event
 		glfwSetScrollCallback(this->m_p_Window, [](GLFWwindow *window, double xOffset, double yOffset)
 													{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -123,12 +134,15 @@ namespace Arklumos
 			data.EventCallback(event); });
 
 		// Listen event mouse movement
+		// function sets the callback for mouse movement, which creates a MouseMovedEvent event
 		glfwSetCursorPosCallback(this->m_p_Window, [](GLFWwindow *window, double xPos, double yPos)
 														 {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			MouseMovedEvent event((float)xPos, (float)yPos);
 			data.EventCallback(event); });
+
+		// All these events are passed to the EventCallback function in the WindowData struct, which is responsible for handling these events.
 	}
 
 	void WindowsWindow::Shutdown()

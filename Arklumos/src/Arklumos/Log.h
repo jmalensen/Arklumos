@@ -20,6 +20,10 @@ namespace Arklumos
 	public:
 		static void Init();
 
+		/*
+			The functions GetCoreLogger() and GetClientLogger() are defined inline and return references to the static s_CoreLogger and s_ClientLogger shared pointers, respectively.
+			These functions provide convenient access to the logger objects from other parts of the application.
+		*/
 		inline static std::shared_ptr<spdlog::logger> &GetCoreLogger() { return s_CoreLogger; }
 		inline static std::shared_ptr<spdlog::logger> &GetClientLogger() { return s_ClientLogger; }
 

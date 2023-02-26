@@ -3,6 +3,7 @@
 // For use by Arklumos applications
 
 #include "Arklumos/Application.h"
+#include "Arklumos/Layer.h"
 #include "Arklumos/Log.h"
 
 // ---Entry Point---------------------

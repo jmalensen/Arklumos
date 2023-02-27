@@ -1,18 +1,14 @@
 # Set the minimum required version of CMake
 cmake_minimum_required(VERSION 3.16)
 
-set(PROJECT_NAME Arklumos)
-project(${PROJECT_NAME} VERSION 0.1.0)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-
 # Target Linux
 if(UNIX AND NOT APPLE)
 	message(STATUS "This is a GNU/Linux system")
   set(CMAKE_SYSTEM_NAME Linux)
 	set(CMAKE_SYSTEM_PROCESSOR x86_64)
+
+  set(CMAKE_C_COMPILER    "/usr/bin/gcc")
+  set(CMAKE_CXX_COMPILER  "/usr/bin/g++")
 endif()
 
 # Target Windows
@@ -20,6 +16,12 @@ if(WIN32)
 	message(STATUS "This is a Windows system")
   set(CMAKE_SYSTEM_NAME Windows)
 endif()
+
+set(PROJECT_NAME Arklumos)
+project(${PROJECT_NAME} VERSION 0.1.0)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 # Set the output directory for the built executable and library
@@ -113,13 +115,20 @@ endif()
 
 # Add the Testbox executable
 # (right now, it's easy because there is only file)
-add_executable(Testbox Testbox/src/Testbox.cpp)
+add_executable(Testbox TestBox/src/Testbox.cpp)
 
 # Link the Testbox executable with the Arklumos library
 target_link_libraries(Testbox PRIVATE ${PROJECT_NAME})
 
 # Define macros for the Testbox
-target_compile_definitions(Testbox PRIVATE AK_PLATFORM_WINDOWS)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	#Define AK_PLATFORM_WINDOWS
+	target_compile_definitions(Testbox PRIVATE AK_PLATFORM_WINDOWS)
+
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	#Define AK_PLATFORM_LINUX
+	target_compile_definitions(Testbox PRIVATE AK_PLATFORM_LINUX)
+endif()
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET Testbox PROPERTY POSITION_INDEPENDENT_CODE ON)

@@ -19,10 +19,10 @@
 							"DAK_DEBUG",
 							"DGLFW_INCLUDE_NONE"
 					],
-					"compilerPath": "C:\\Devc++\\mingw64\\bin\\g++.exe",
+					"compilerPath": "/usr/bin/g++",
 					"cStandard": "c17",
 					"cppStandard": "c++20",
-					"intelliSenseMode": "windows-gcc-x64",
+					"intelliSenseMode": "linux-gcc-x64",
 					"configurationProvider": "linux"
 			}
 	],

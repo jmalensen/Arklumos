@@ -7,7 +7,7 @@
 #include "Arklumos/Events/Event.h"
 #include "Arklumos/Events/ApplicationEvent.h"
 #include "Log.h"
-#include "Window.h"
+#include "Arklumos/Window.h"
 
 #include <glad/glad.h>
 

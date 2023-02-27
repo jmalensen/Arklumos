@@ -15,7 +15,9 @@
 #include "Arklumos/Log.h"
 
 #ifdef AK_PLATFORM_WINDOWS
-#include <Windows.h>
-#elif defined(AK_PLATFORM_LINUX)
-#include <Windows.h>
+#include "Arklumos/Windows.h"
+#endif
+
+#ifdef AK_PLATFORM_LINUX
+#include "Arklumos/Windows.h"
 #endif

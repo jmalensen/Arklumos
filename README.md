@@ -4,6 +4,9 @@ Arklumos game engine
 
 # Before starting
 - Clone the repo and check the submodules (spdlog, GLFW, ImGui)
+- git clone --recurse-submodules -j8 https://github.com/jmalensen/Arklumos.git
+If trouble with submodules
+git submodule update --init --recursive
 - Check the folder acmake-required to copy the CMakeLists.txt to the folder Arklumos/vendor/imgui (required for CMake to process ImGui library)
 
 ## For Visual Studio Code
@@ -13,7 +16,10 @@ You need to copy (depending on your OS):
 
 To c_cpp_properties.json in the folder .vscode
 
-Pay attention to these lines, you might need to changes them:
+Pay attention to these lines, you might need to changes them (especially compilerPath):
+"compilerPath": "/usr/bin/g++",
+"intelliSenseMode": "linux-gcc-x64",
+Or
 "compilerPath": "C:\\Devc++\\mingw64\\bin\\g++.exe",
 "intelliSenseMode": "windows-gcc-x64",
 

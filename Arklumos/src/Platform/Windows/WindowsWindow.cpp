@@ -51,6 +51,8 @@ namespace Arklumos
 		*/
 		this->m_p_Window = glfwCreateWindow((int)props.Width, (int)props.Height, this->m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(this->m_p_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		AK_CORE_ASSERT(status, "Failed to initialize Glad!");
 		glfwSetWindowUserPointer(this->m_p_Window, &this->m_Data);
 		SetVSync(true);
 

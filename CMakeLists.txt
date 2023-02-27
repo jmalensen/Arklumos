@@ -1,4 +1,5 @@
 
+# Set the minimum required version of CMake
 cmake_minimum_required(VERSION 3.16)
 
 set(PROJECT_NAME Arklumos)
@@ -33,6 +34,9 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW/include)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW)
 
+include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glad/include)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glad)
+
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/src)
 
 ## ARKLUMOS LIB PART
@@ -49,7 +53,7 @@ add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
 # Link the Arklumos dll with the glfw library
 # (as we are using Windows with mingw64, we need also opengl32 gdi32)
-target_link_libraries(${PROJECT_NAME} glfw opengl32 gdi32)
+target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32)
 
 # Set the precompiled header file and include it in the Arklumos
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Arklumos/src/akpch.h)
@@ -59,7 +63,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" OUTPUT_NAME "Arklumos
 
 # Define macros for the Arklumos library
 # (here to specify it's for windows and to build a dll)
-target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_ENABLE_ASSERTS)
+target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_ENABLE_ASSERTS GLFW_INCLUDE_NONE)
 
 
 ## TESTBOX PART

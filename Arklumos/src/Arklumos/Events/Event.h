@@ -23,6 +23,7 @@ namespace Arklumos
 		AppRender,
 		KeyPressed,
 		KeyReleased,
+		KeyTyped,
 		MouseButtonPressed,
 		MouseButtonReleased,
 		MouseMoved,

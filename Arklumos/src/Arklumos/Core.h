@@ -10,6 +10,10 @@
 // #error Arklumos only supports Windows!
 #endif
 
+#ifdef AK_DEBUG
+#define AK_ENABLE_ASSERTS
+#endif
+
 #ifdef AK_ENABLE_ASSERTS
 #define AK_ASSERT(x, ...)                             \
 	{                                                   \
@@ -42,3 +46,5 @@
 	By using the BIT macro, code can easily define and manipulate bit flags using a more readable and convenient syntax.
 */
 #define BIT(x) (1 << x)
+
+#define AK_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)

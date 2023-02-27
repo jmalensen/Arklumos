@@ -74,8 +74,8 @@ namespace Arklumos
 
 		// Calculates the time elapsed since the last frame, and sets the DeltaTime property of the ImGuiIO object.
 		// If this is the first frame, it sets DeltaTime to a default value of 1/60 seconds
-		io.DeltaTime = m_Time > 0.0f ? (time - m_Time) : (1.0f / 60.0f);
-		m_Time = time;
+		io.DeltaTime = this->m_Time > 0.0f ? (time - this->m_Time) : (1.0f / 60.0f);
+		this->m_Time = time;
 
 		// Starts a new frame for the OpenGL backend
 		ImGui_ImplOpenGL3_NewFrame();
@@ -95,6 +95,115 @@ namespace Arklumos
 
 	void ImGuiLayer::OnEvent(Event &event)
 	{
+		EventDispatcher dispatcher(event);
+		// Set up all the events needed to be dispatched
+		dispatcher.Dispatch<MouseButtonPressedEvent>(AK_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
+		dispatcher.Dispatch<MouseButtonReleasedEvent>(AK_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleasedEvent));
+		dispatcher.Dispatch<MouseMovedEvent>(AK_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
+		dispatcher.Dispatch<MouseScrolledEvent>(AK_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
+		dispatcher.Dispatch<KeyPressedEvent>(AK_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
+		dispatcher.Dispatch<KeyTypedEvent>(AK_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
+		dispatcher.Dispatch<KeyReleasedEvent>(AK_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
+		dispatcher.Dispatch<WindowResizeEvent>(AK_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
+	}
+
+	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent &e)
+	{
+		// Gets a reference to the ImGuiIO object for the current ImGui context
+		ImGuiIO &io = ImGui::GetIO();
+
+		// Store that mouse button is pressed
+		io.MouseDown[e.GetMouseButton()] = true;
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnMouseButtonReleasedEvent(MouseButtonReleasedEvent &e)
+	{
+		// Gets a reference to the ImGuiIO object for the current ImGui context
+		ImGuiIO &io = ImGui::GetIO();
+
+		// Store that mouse button is released
+		io.MouseDown[e.GetMouseButton()] = false;
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnMouseMovedEvent(MouseMovedEvent &e)
+	{
+		// Gets a reference to the ImGuiIO object for the current ImGui context
+		ImGuiIO &io = ImGui::GetIO();
+
+		// Store the position of the mouse in vector
+		io.MousePos = ImVec2(e.GetX(), e.GetY());
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnMouseScrolledEvent(MouseScrolledEvent &e)
+	{
+		// Gets a reference to the ImGuiIO object for the current ImGui context
+		ImGuiIO &io = ImGui::GetIO();
+		io.MouseWheelH += e.GetXOffset();
+		io.MouseWheel += e.GetYOffset();
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent &e)
+	{
+		// Gets a reference to the ImGuiIO object for the current ImGui context
+		ImGuiIO &io = ImGui::GetIO();
+
+		// Store that a key has been pressed
+		io.KeysDown[e.GetKeyCode()] = true;
+
+		// Set up CTRL, SHIFT, ALT, Super keys for ImGuiIO
+		io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+		io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+		io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+		return false;
+	}
+
+	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent &e)
+	{
+		// Gets a reference to the ImGuiIO object for the current ImGui context
+		ImGuiIO &io = ImGui::GetIO();
+
+		// Store that key has been released
+		io.KeysDown[e.GetKeyCode()] = false;
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent &e)
+	{
+		// Gets a reference to the ImGuiIO object for the current ImGui context
+		ImGuiIO &io = ImGui::GetIO();
+
+		// Get the key code while we are typing
+		int keycode = e.GetKeyCode();
+		if (keycode > 0 && keycode < 0x10000)
+		{
+			// Pass that code to ImGuiIO
+			io.AddInputCharacter((unsigned short)keycode);
+		}
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnWindowResizeEvent(WindowResizeEvent &e)
+	{
+		// Gets a reference to the ImGuiIO object for the current ImGui context
+		ImGuiIO &io = ImGui::GetIO();
+
+		// Store the new size of window in a vector
+		io.DisplaySize = ImVec2(e.GetWidth(), e.GetHeight());
+		io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+		glViewport(0, 0, e.GetWidth(), e.GetHeight());
+
+		return false;
 	}
 
 }

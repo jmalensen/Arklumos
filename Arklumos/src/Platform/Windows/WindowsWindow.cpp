@@ -104,10 +104,21 @@ namespace Arklumos
 				}
 			} });
 
+		// function sets the callback to be called when the user types a character while the window has focus. this->m_p_Window is a pointer to the GLFW window that the callback will be set on
+		glfwSetCharCallback(this->m_p_Window, [](GLFWwindow *window, unsigned int keycode)
+												{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			KeyTypedEvent event(keycode);
+			data.EventCallback(event); });
+
 		// Listen event mousebutton pressed / released
 		// function sets the callback for mouse button presses and releases, which creates either a MouseButtonPressedEvent or a MouseButtonReleasedEvent event depending on the action
 		glfwSetMouseButtonCallback(this->m_p_Window, [](GLFWwindow *window, int button, int action, int mods)
 															 {
+
+			//Retrieves a reference to the WindowData struct associated with the window, which was previously set using glfwSetWindowUserPointer().
+			//This allows the code to access any data associated with the window, such as event callbacks
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			switch (action)

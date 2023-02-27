@@ -71,7 +71,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" OUTPUT_NAME "Arklumos
 
 # Define macros for the Arklumos library
 # (here to specify it's for windows and to build a dll)
-target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_ENABLE_ASSERTS GLFW_INCLUDE_NONE)
+target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_DEBUG GLFW_INCLUDE_NONE)
 
 
 ## TESTBOX PART

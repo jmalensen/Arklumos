@@ -63,4 +63,22 @@ namespace Arklumos
 
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
+
+	// KeyTypedEvent
+	class ARKLUMOS_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int keycode)
+				: KeyEvent(keycode) {}
+
+		// For debugging purpose
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyTypedEvent: " << m_KeyCode;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(KeyTyped)
+	};
 }

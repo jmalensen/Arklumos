@@ -10,16 +10,21 @@ bin-int
 #Ignore dependencies
 dependencies
 
-#Arklumos/vendor/spdlog
-
 #Ignore settings for .vscode because it's dependant on OS
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/settings.json
 .vscode/tasks.json
 
-#Ignore CMakeLists.txt because it's dependant on OS
+#Ignore CMakeCache.txt
 CMakeCache.txt
+CMakeFiles
+
+#Ignore ninja files
+.ninja_deps
+.ninja_log
+build.ninja
+cmake_install.cmake
 
 #Ignore Mac specific files if any
 .DS_Store

@@ -1,0 +1,33 @@
+
+# Set the minimum required version of CMake
+cmake_minimum_required(VERSION 3.16)
+
+# Set the project name
+set(PROJECT_NAME imgui)
+project(${PROJECT_NAME})
+
+# Add the source files to the project
+add_library(${PROJECT_NAME} STATIC 
+	"imconfig.h"
+	"imgui.h"
+	"imgui.cpp"
+	"imgui_draw.cpp"
+	"imgui_internal.h"
+	"imgui_tables.cpp"
+	"imgui_widgets.cpp"
+	"imstb_rectpack.h"
+	"imstb_textedit.h"
+	"imstb_truetype.h"
+	"imgui_demo.cpp"
+)
+
+# Link the glad dll with the required libraries depending on the system
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	message(STATUS "ImGui for Windows")
+	# (as we are using Windows with mingw64, we need also opengl32 gdi32 for imgui)
+	target_link_libraries(${PROJECT_NAME} glfw opengl32 gdi32)
+
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	message(STATUS "ImGui for Linux")
+	#target_link_libraries(${PROJECT_NAME})
+endif()

@@ -1,0 +1,30 @@
+{
+	"configurations": [
+			{
+					"name": "Win32_mingw64",
+					"includePath": [
+							"Arklumos/src",
+							"Arklumos/vendor/spdlog/include",
+							"Arklumos/vendor/GLFW/include",
+							"Arklumos/vendor/glad/include",
+							"Arklumos/vendor/imgui",
+							"${workspaceFolder}/**"
+					],
+					"defines": [
+							"_DEBUG",
+							"UNICODE",
+							"_UNICODE",
+							"DAK_PLATFORM_WINDOWS",
+							"DAK_BUILD_DLL",
+							"DAK_DEBUG",
+							"DGLFW_INCLUDE_NONE"
+					],
+					"compilerPath": "C:\\Devc++\\mingw64\\bin\\g++.exe",
+					"cStandard": "c17",
+					"cppStandard": "c++20",
+					"intelliSenseMode": "windows-gcc-x64",
+					"configurationProvider": "ms-vscode.cmake-tools"
+			}
+	],
+	"version": 4
+}

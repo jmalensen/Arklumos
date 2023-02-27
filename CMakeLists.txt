@@ -7,6 +7,21 @@ project(${PROJECT_NAME} VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+# Target Linux
+if(UNIX AND NOT APPLE)
+	message(STATUS "This is a GNU/Linux system")
+  set(CMAKE_SYSTEM_NAME Linux)
+	set(CMAKE_SYSTEM_PROCESSOR x86_64)
+endif()
+
+# Target Windows
+if(WIN32)
+	message(STATUS "This is a Windows system")
+  set(CMAKE_SYSTEM_NAME Windows)
+endif()
+
+
 # Set the output directory for the built executable and library
 # because I want a specific output folder
 set(outputdir "${CMAKE_CFG_INTDIR}/${CMAKE_SYSTEM_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
@@ -58,9 +73,16 @@ file(GLOB_RECURSE SRC_FILES
 # (apparently, after test if SHARED is not used CMake is failing :/)
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
-# Link the Arklumos dll with the glfw library
-# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glfw)
-target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui)
+
+# Link the Arklumos dll with the glfw, glad, imgui libraries
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glfw)
+	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui)
+
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	target_link_libraries(${PROJECT_NAME} glad glfw imgui)
+endif()
+
 
 # Set the precompiled header file and include it in the Arklumos
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Arklumos/src/akpch.h)
@@ -70,7 +92,15 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" OUTPUT_NAME "Arklumos
 
 # Define macros for the Arklumos library
 # (here to specify it's for windows and to build a dll)
-target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_DEBUG GLFW_INCLUDE_NONE)
+# GLFW_INCLUDE_NONE is for glad to work with glfw
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	#Define AK_PLATFORM_WINDOWS
+	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_DEBUG GLFW_INCLUDE_NONE)
+
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	#Define AK_PLATFORM_LINUX
+	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_LINUX AK_DEBUG GLFW_INCLUDE_NONE)
+endif()
 
 
 ## TESTBOX PART

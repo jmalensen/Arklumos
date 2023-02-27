@@ -13,4 +13,15 @@ add_library(${PROJECT_NAME} STATIC
             "include/KHR/khrplatform.h"
             )
 
-target_link_libraries(${PROJECT_NAME} opengl32 gdi32)
+
+
+# Link the glad dll with the required libraries depending on the system
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	message(STATUS "Glad for Windows")
+	# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glad)
+	target_link_libraries(${PROJECT_NAME} opengl32 gdi32)
+
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	message(STATUS "Glad for Linux")
+	#target_link_libraries(${PROJECT_NAME})
+endif()

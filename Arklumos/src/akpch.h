@@ -16,4 +16,6 @@
 
 #ifdef AK_PLATFORM_WINDOWS
 #include <Windows.h>
+#elif defined(AK_PLATFORM_LINUX)
+#include <Windows.h>
 #endif

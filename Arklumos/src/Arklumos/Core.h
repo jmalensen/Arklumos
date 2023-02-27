@@ -1,13 +1,22 @@
 #pragma once
 
 #ifdef AK_PLATFORM_WINDOWS
+
 #ifdef AK_BUILD_DLL
 #define ARKLUMOS_API __declspec(dllexport)
 #else
 #define ARKLUMOS_API __declspec(dllimport)
 #endif
+
+#elif defined(AK_PLATFORM_LINUX)
+
+#ifdef AK_BUILD_DLL
+// Assuming GCC compiler is used on GNU/Linux
+#define ARKLUMOS_API __attribute__((visibility("default")))
 #else
-// #error Arklumos only supports Windows!
+#define ARKLUMOS_API
+#endif
+
 #endif
 
 #ifdef AK_DEBUG

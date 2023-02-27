@@ -6,6 +6,10 @@
 #include "Arklumos/Layer.h"
 #include "Arklumos/Log.h"
 
+#include "Arklumos/Input.h"
+#include "Arklumos/KeyCodes.h"
+#include "Arklumos/MouseButtonCodes.h"
+
 #include "Arklumos/ImGui/ImGuiLayer.h"
 
 // ---Entry Point---------------------

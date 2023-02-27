@@ -11,12 +11,23 @@ public:
 
 	void OnUpdate() override
 	{
-		AK_INFO("ExampleLayer::Update");
+		if (Arklumos::Input::IsKeyPressed(AK_KEY_TAB))
+		{
+			AK_TRACE("Tab key is pressed (poll)!");
+		}
 	}
 
 	void OnEvent(Arklumos::Event &event) override
 	{
-		AK_TRACE("{0}", event);
+		if (event.GetEventType() == Arklumos::EventType::KeyPressed)
+		{
+			Arklumos::KeyPressedEvent &e = (Arklumos::KeyPressedEvent &)event;
+			if (e.GetKeyCode() == AK_KEY_TAB)
+			{
+				AK_TRACE("Tab key is pressed (event)!");
+			}
+			AK_TRACE("{0}", (char)e.GetKeyCode());
+		}
 	}
 };
 

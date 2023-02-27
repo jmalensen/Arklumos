@@ -26,6 +26,7 @@ public:
 	Testbox()
 	{
 		PushLayer(new ExampleLayer());
+		PushOverlay(new Arklumos::ImGuiLayer());
 	}
 
 	~Testbox()

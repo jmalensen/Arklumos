@@ -15,6 +15,11 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${outputdir}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${outputdir}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${outputdir}")
 
+# If no CMAKE_BUILD, we set it to Release
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
 # Add specifics flags depending if the build is for debug
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG")
@@ -37,6 +42,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW)
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glad/include)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glad)
 
+include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
+
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/src)
 
 ## ARKLUMOS LIB PART
@@ -52,8 +60,8 @@ file(GLOB_RECURSE SRC_FILES
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
 # Link the Arklumos dll with the glfw library
-# (as we are using Windows with mingw64, we need also opengl32 gdi32)
-target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32)
+# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glfw)
+target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui)
 
 # Set the precompiled header file and include it in the Arklumos
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Arklumos/src/akpch.h)

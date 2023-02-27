@@ -11,6 +11,10 @@ Check the CMakeLists.txt for all dependencies if anything needs to be changed
 run first: $ cmake -G Ninja
 after, it's only: $ ninja //(-j 10 = depending on how many jobs in parallel, 10 here)
 
+https://ilyas-hamadouche.medium.com/build-your-c-projects-faster-using-ninja-3d7af9b418fc
+https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages
+
+
 # For premake windows
 # Execute the build.bat
 # To generate the bin and bin-int files

@@ -32,3 +32,7 @@ cmake_install.cmake
 Arklumos-engine.code-workspace
 
 Makefile
+
+#CMake files to spare because of the ImGui submodule
+Arklumos/vendor/imgui/cmake_install.cmake
+Arklumos/vendor/imgui/CMakeLists.txt

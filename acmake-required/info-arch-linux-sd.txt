@@ -1,0 +1,63 @@
+//Steam Deck only
+sudo steamos-readonly disable
+sudo pacman-key --init
+sudo pacman-key --populate archlinux
+sudo pacman-key --populate holo
+
+sudo pacman -Sy base-devel
+sudo pacman -Sy glibc
+sudo pacman -Sy lib32-glibc
+sudo pacman -Sy linux-headers
+sudo pacman -Sy linux-api-headers
+sudo pacman -Sy linux-neptune-headers
+
+???? sudo pacman -Ss libc6-dev ????
+
+sudo pacman -Sy make
+sudo pacman -Sy cmake
+sudo pacman -Sy ninja
+
+
+Need to be changed in the ninja file
+/usr/lib/x86_64-linux-gnu/librt.a
+/usr/lib/librt.a
+
+/usr/lib/x86_64-linux-gnu/libm.so
+/usr/lib/libm.so
+Ninja file still
+
+
+???? sudo pacman -S libx11 ????
+???? sudo pacman -Sy xorg-server-devel ????
+???? sudo pacman -Sy glfw-x11 ????
+???? sudo pacman -Sy libgl ????
+???? sudo pacman -Sy glu ????
+
+
+???? Makefile with the flags -lGL -lGLU -lglfw3 -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lXinerama -lXcursor ????
+
+missing X11/X.h
+sudo pacman -Ss xorgproto
+
+missing X11/Xcursor/Xcursor.h
+sudo pacman -Ss libxcursor
+
+missing X11/extensions/Xrandr.h
+sudo pacman -Ss libxrandr
+
+missing X11/extensions/Xrender.h
+sudo pacman -Ss libxrender 
+
+missing X11/extensions/Xinerama.h
+sudo pacman -Ss libxinerama
+
+missing X11/extensions/XInput2.h
+sudo pacman -Ss libxi
+
+missing X11/extensions/Xge.h
+sudo pacman -Ss libxext
+
+missing X11/extensions/Xfixes.h
+sudo pacman -Ss libxfixes
+
+sudo steamos-readonly enable

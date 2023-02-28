@@ -9,6 +9,11 @@ if(UNIX AND NOT APPLE)
 
   set(CMAKE_C_COMPILER    "/usr/bin/gcc")
   set(CMAKE_CXX_COMPILER  "/usr/bin/g++")
+
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+  # set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+  # list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 endif()
 
 # Target Windows
@@ -63,6 +68,14 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
 
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/src)
 
+# if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+#   set(GLFW_ROOT_DIR ${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW)
+#   set(GLFW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW/include)
+#   set(GLFW_LIBRARY ${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW)
+
+#   find_package(GLFW REQUIRED)
+# endif()
+
 ## ARKLUMOS LIB PART
 # Find the files for the Arklumos library
 # (should I target each file one by one ?)
@@ -82,7 +95,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui)
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_link_libraries(${PROJECT_NAME} glad glfw imgui)
+	target_link_libraries(${PROJECT_NAME} glad glfw imgui)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)
 endif()
 
 

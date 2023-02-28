@@ -15,9 +15,13 @@
 #include "Arklumos/Log.h"
 
 #ifdef AK_PLATFORM_WINDOWS
-#include "Arklumos/Windows.h"
+#include <Windows.h>
 #endif
 
 #ifdef AK_PLATFORM_LINUX
-#include "Arklumos/Windows.h"
+#include <fcntl.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif

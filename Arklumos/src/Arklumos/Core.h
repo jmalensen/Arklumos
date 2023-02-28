@@ -8,14 +8,10 @@
 #endif
 #endif
 
-#ifdef AK_PLATFORM_LINUX
-#ifdef AK_BUILD_DLL
-// Assuming GCC compiler is used on GNU/Linux
-#define ARKLUMOS_API __attribute__ ((visibility ("default")))
-#else
-#define ARKLUMOS_API _attribute__ ((visibility ("hidden")))
-#endif
-#endif
+// #ifdef AK_PLATFORM_LINUX
+// // Assuming GCC compiler is used on GNU/Linux
+// // #define ARKLUMOS_API __attribute__ ((visibility ("default")))
+// #endif
 
 
 
@@ -40,10 +36,9 @@
 #else
   #if __GNUC__ >= 4
     #define ARKLUMOS_API __attribute__ ((visibility ("default")))
-    #define NOT_EXPORTED  __attribute__ ((visibility ("hidden")))
+    //#define NOT_EXPORTED  __attribute__ ((visibility ("hidden")))
   #else
-    #define EXPORTED
-    #define NOT_EXPORTED
+    //#define ARKLUMOS_API
   #endif
 #endif
 
@@ -61,7 +56,6 @@
 		if (!(x))                                         \
 		{                                                 \
 			AK_ERROR("Assertion Failed: {0}", __VA_ARGS__); \
-			__debugbreak();                                 \
 		}                                                 \
 	}
 #define AK_CORE_ASSERT(x, ...)                             \
@@ -69,7 +63,6 @@
 		if (!(x))                                              \
 		{                                                      \
 			AK_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); \
-			__debugbreak();                                      \
 		}                                                      \
 	}
 #else

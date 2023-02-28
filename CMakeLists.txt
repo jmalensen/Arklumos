@@ -1,5 +1,6 @@
 # Set the minimum required version of CMake
 cmake_minimum_required(VERSION 3.16)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Target Linux
 if(UNIX AND NOT APPLE)

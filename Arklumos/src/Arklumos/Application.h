@@ -3,11 +3,14 @@
 #include "akpch.h"
 
 #include "Core.h"
+#include "Arklumos/Window.h"
 #include "Arklumos/LayerStack.h"
 #include "Arklumos/Events/Event.h"
 #include "Arklumos/Events/ApplicationEvent.h"
+
+#include "Arklumos/ImGui/ImGuiLayer.h"
+
 #include "Log.h"
-#include "Arklumos/Window.h"
 
 #include <glad/glad.h>
 
@@ -37,6 +40,7 @@ namespace Arklumos
 		bool OnWindowClose(WindowCloseEvent &e);
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer *m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 

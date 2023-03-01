@@ -14,6 +14,16 @@ namespace Arklumos
 
 		this->m_Window = std::unique_ptr<Window>(Window::Create());
 		this->m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+		/*
+			Creates a new ImGuiLayer object and assigns it to the m_ImGuiLayer pointer variable of the current object.
+			Then, it calls the PushOverlay function of the current object, passing the m_ImGuiLayer pointer as an argument.
+
+			The PushOverlay function is used to add the m_ImGuiLayer as an overlay to the rendering pipeline.
+			In other words, it will ensure that the ImGuiLayer is rendered on top of all other layers or objects in the scene.
+		*/
+		this->m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(this->m_ImGuiLayer);
 	}
 
 	Application::~Application()
@@ -72,6 +82,20 @@ namespace Arklumos
 				layer->OnUpdate();
 			}
 
+			// Starts the ImGui rendering process
+			// Begin() is a method provided by the ImGuiLayer class that initializes the rendering context
+			this->m_ImGuiLayer->Begin();
+
+			// Iterates over all the layers in the m_LayerStack and calls their OnImGuiRender() method
+			for (Layer *layer : m_LayerStack)
+			{
+				layer->OnImGuiRender();
+			}
+
+			// Marks the end of the ImGui rendering process
+			this->m_ImGuiLayer->End();
+
+			// Updates the application window with the rendered ImGui elements and performs any other necessary updates
 			this->m_Window->OnUpdate();
 		}
 	}

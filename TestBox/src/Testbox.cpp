@@ -1,5 +1,7 @@
-#include "../../Arklumos/src/Arklumos.h"
-//#include <Arklumos.h>
+// #include "../../Arklumos/src/Arklumos.h"
+#include <Arklumos.h>
+
+#include <imgui.h>
 
 class ExampleLayer : public Arklumos::Layer
 {
@@ -15,6 +17,13 @@ public:
 		{
 			AK_TRACE("Tab key is pressed (poll)!");
 		}
+	}
+
+	virtual void OnImGuiRender() override
+	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello World");
+		ImGui::End();
 	}
 
 	void OnEvent(Arklumos::Event &event) override
@@ -37,7 +46,6 @@ public:
 	Testbox()
 	{
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Arklumos::ImGuiLayer());
 	}
 
 	~Testbox()

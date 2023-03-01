@@ -1,12 +1,7 @@
 #pragma once
-#include "akpch.h"
+
 #include "Arklumos/Window.h"
 
-#include "Arklumos/Events/ApplicationEvent.h"
-#include "Arklumos/Events/MouseEvent.h"
-#include "Arklumos/Events/KeyEvent.h"
-
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace Arklumos

@@ -1,10 +1,6 @@
 #pragma once
 
-#include "akpch.h"
 #include "Arklumos/Input.h"
-
-#include "Arklumos/Application.h"
-#include <GLFW/glfw3.h>
 
 namespace Arklumos
 {

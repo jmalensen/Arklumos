@@ -1,6 +1,5 @@
 #pragma once
 
-#include "akpch.h"
 #include "Arklumos/Core.h"
 #include "Arklumos/Events/Event.h"
 

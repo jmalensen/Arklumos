@@ -1,5 +1,14 @@
+#include "akpch.h"
 #include "ImGuiLayer.h"
 
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.cpp"
+#include "backends/imgui_impl_opengl3.cpp"
+
+#include "Arklumos/Application.h"
+
+// TODO: Temp ?
+#include <GLFW/glfw3.h>
 namespace Arklumos
 {
 
@@ -143,5 +152,9 @@ namespace Arklumos
 	{
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
+
+		// ImGui::Begin("Test");
+		// ImGui::Text("Hello World");
+		// ImGui::End();
 	}
 }

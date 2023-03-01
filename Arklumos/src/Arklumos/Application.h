@@ -1,20 +1,12 @@
 #pragma once
 
-#include "akpch.h"
-
 #include "Core.h"
-#include "Arklumos/Window.h"
+#include "Window.h"
 #include "Arklumos/LayerStack.h"
 #include "Arklumos/Events/Event.h"
 #include "Arklumos/Events/ApplicationEvent.h"
 
 #include "Arklumos/ImGui/ImGuiLayer.h"
-
-#include "Log.h"
-
-#include <glad/glad.h>
-
-#include "Input.h"
 
 namespace Arklumos
 {

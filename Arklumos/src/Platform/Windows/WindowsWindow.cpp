@@ -1,4 +1,11 @@
+#include "akpch.h"
 #include "WindowsWindow.h"
+
+#include "Arklumos/Events/ApplicationEvent.h"
+#include "Arklumos/Events/MouseEvent.h"
+#include "Arklumos/Events/KeyEvent.h"
+
+#include <glad/glad.h>
 
 namespace Arklumos
 {

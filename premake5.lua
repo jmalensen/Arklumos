@@ -16,6 +16,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Arklumos/vendor/GLFW/include"
 IncludeDir["glad"] = "Arklumos/vendor/glad/include"
 IncludeDir["ImGui"] = "Arklumos/vendor/imgui"
+IncludeDir["glm"] = "Arklumos/vendor/glm"
 
 group "Dependencies"
 	include "Arklumos/vendor/GLFW"
@@ -39,7 +40,9 @@ project "Arklumos"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
 
 	includedirs
@@ -48,7 +51,8 @@ project "Arklumos"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glad}",
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}"
 	}
 
 	links 
@@ -108,7 +112,8 @@ project "Testbox"
 	includedirs
 	{
 		"Arklumos/vendor/spdlog/include",
-		"Arklumos/src"
+		"Arklumos/src",
+		"%{IncludeDir.glm}"
 	}
 
 	links

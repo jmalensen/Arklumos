@@ -13,6 +13,13 @@ if(UNIX AND NOT APPLE)
 
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+	##TODO: To be tested For Linux
+	# Set path to librt.a
+	#link_directories(/path/to/librt)
+	#the second one is supposed to be better
+	#target_link_libraries(my_target_name PRIVATE /path/to/librt.a)
+	##To be tested For Linux
+
   # set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
   # list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 endif()
@@ -67,6 +74,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glad)
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
 
+include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glm)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glm)
+
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/src)
 
 # if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -93,10 +103,10 @@ add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 # Link the Arklumos dll with the glfw, glad, imgui libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glfw)
-	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui)
+	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui glm)
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_link_libraries(${PROJECT_NAME} glad glfw imgui)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)
+	target_link_libraries(${PROJECT_NAME} glad glfw imgui glm)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)
 endif()
 
 
@@ -111,7 +121,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" OUTPUT_NAME "Arklumos
 # GLFW_INCLUDE_NONE is for glad to work with glfw
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	#Define AK_PLATFORM_WINDOWS
-	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_DEBUG GLFW_INCLUDE_NONE)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_DEBUG)# GLFW_INCLUDE_NONE)
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	#Define AK_PLATFORM_LINUX

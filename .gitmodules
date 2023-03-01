@@ -7,3 +7,6 @@
 [submodule "Arklumos/vendor/imgui"]
 	path = Arklumos/vendor/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "Arklumos/vendor/glm"]
+	path = Arklumos/vendor/glm
+	url = https://github.com/g-truc/glm

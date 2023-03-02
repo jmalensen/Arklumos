@@ -96,8 +96,8 @@ file(GLOB_RECURSE SRC_FILES
 )
 
 # Add the Arklumos library
-# (apparently, after test if SHARED is not used CMake is failing :/)
-add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
+# (apparently, after test if STATIC is not used CMake is failing :/)
+add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
 
 
 # Link the Arklumos dll with the glfw, glad, imgui libraries
@@ -142,7 +142,8 @@ endif()
 add_executable(Testbox TestBox/src/Testbox.cpp)
 
 # Link the Testbox executable with the Arklumos library
-target_link_libraries(Testbox PRIVATE ${PROJECT_NAME})
+target_link_libraries(Testbox PRIVATE ${PROJECT_NAME} imgui)
+# target_link_directories(Testbox PRIVATE ${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
 
 # Define macros for the Testbox
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")

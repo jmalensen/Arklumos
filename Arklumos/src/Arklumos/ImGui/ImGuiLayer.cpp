@@ -124,7 +124,7 @@ namespace Arklumos
 		Application &app = Application::Get();
 
 		// Set the display size of ImGui to match the size of the application window
-		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
 		// Rendering
 		ImGui::Render();

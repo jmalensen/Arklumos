@@ -1,10 +1,16 @@
 #pragma once
 
 #ifdef AK_PLATFORM_WINDOWS
+#if AK_DYNAMIC_LINK
+
 #ifdef AK_BUILD_DLL
 #define ARKLUMOS_API __declspec(dllexport)
 #else
 #define ARKLUMOS_API __declspec(dllimport)
+#endif
+
+#else
+#define ARKLUMOS_API
 #endif
 #endif
 
@@ -13,38 +19,37 @@
 // // #define ARKLUMOS_API __attribute__ ((visibility ("default")))
 // #endif
 
-
-
-
-// Define EXPORTED for any platform
+///
+// Define ARKLUMOS_API for any platform
 #if defined _WIN32 || defined __CYGWIN__
-//   #ifdef WIN_EXPORT
-//     // Exporting...
-//     #ifdef __GNUC__
-//       #define EXPORTED __attribute__ ((dllexport))
-//     #else
-//       #define EXPORTED __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
-//     #endif
-//   #else
-//     #ifdef __GNUC__
-//       #define EXPORTED __attribute__ ((dllimport))
-//     #else
-//       #define EXPORTED __declspec(dllimport) // Note: actually gcc seems to also supports this syntax.
-//     #endif
-//   #endif
-//   #define NOT_EXPORTED
+
+// #ifdef AK_BUILD_DLL
+// // Exporting...
+// #ifdef __GNUC__
+// #define ARKLUMOS_API __attribute__((dllexport))
+// #else
+// #define ARKLUMOS_API __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
+// #endif
+// #else
+// #ifdef __GNUC__
+// #define ARKLUMOS_API __attribute__((dllimport))
+// #else
+// #define ARKLUMOS_API __declspec(dllimport) // Note: actually gcc seems to also supports this syntax.
+// #endif
+// #endif
+
+// NOT defined _WIN32 || defined __CYGWIN__ (Linux)
 #else
-  #if __GNUC__ >= 4
-    #define ARKLUMOS_API __attribute__ ((visibility ("default")))
-    //#define NOT_EXPORTED  __attribute__ ((visibility ("hidden")))
-  #else
-    //#define ARKLUMOS_API
-  #endif
+
+#if __GNUC__ >= 4
+#define ARKLUMOS_API __attribute__((visibility("default")))
+// #define NOT_EXPORTED  __attribute__ ((visibility ("hidden")))
+#else
+// #define ARKLUMOS_API
 #endif
 
-
-
-
+#endif
+///
 
 #ifdef AK_DEBUG
 #define AK_ENABLE_ASSERTS

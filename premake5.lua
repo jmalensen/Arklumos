@@ -27,7 +27,7 @@ group ""
 
 project "Arklumos"
 	location "Arklumos"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
 	staticruntime "off"
 
@@ -43,6 +43,11 @@ project "Arklumos"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+	}
+
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 
 	includedirs
@@ -82,23 +87,24 @@ project "Arklumos"
 	filter "configurations:Debug"
 		defines "AK_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "AK_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "AK_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 project "Testbox"
 	location "Testbox"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "off"
+	cppdialect "C++20"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -133,14 +139,14 @@ project "Testbox"
 	filter "configurations:Debug"
 		defines "AK_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "AK_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "AK_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"

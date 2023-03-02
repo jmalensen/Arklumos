@@ -22,9 +22,9 @@ public:
 	virtual void OnImGuiRender() override
 	{
 		// TODO: figure out how to make this part work
-		//  ImGui::Begin("Test");
-		//  ImGui::Text("Hello World");
-		//  ImGui::End();
+		// ImGui::Begin("Test");
+		// ImGui::Text("Hello World");
+		// ImGui::End();
 	}
 
 	void OnEvent(Arklumos::Event &event) override

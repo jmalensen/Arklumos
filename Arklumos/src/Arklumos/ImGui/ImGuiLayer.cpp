@@ -152,9 +152,5 @@ namespace Arklumos
 	{
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
-
-		// ImGui::Begin("Test");
-		// ImGui::Text("Hello World");
-		// ImGui::End();
 	}
 }

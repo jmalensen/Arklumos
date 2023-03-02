@@ -21,7 +21,6 @@ public:
 
 	virtual void OnImGuiRender() override
 	{
-		// TODO: figure out how to make this part work
 		ImGui::Begin("Test");
 		ImGui::Text("Hello World");
 		ImGui::End();

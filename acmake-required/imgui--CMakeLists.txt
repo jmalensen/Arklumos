@@ -6,20 +6,32 @@ cmake_minimum_required(VERSION 3.16)
 set(PROJECT_NAME imgui)
 project(${PROJECT_NAME})
 
-# Add the source files to the project
-add_library(${PROJECT_NAME} STATIC 
-	"imconfig.h"
-	"imgui.h"
-	"imgui.cpp"
-	"imgui_draw.cpp"
-	"imgui_internal.h"
-	"imgui_tables.cpp"
-	"imgui_widgets.cpp"
-	"imstb_rectpack.h"
-	"imstb_textedit.h"
-	"imstb_truetype.h"
-	"imgui_demo.cpp"
+file(GLOB IMGUI_SRC_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
+
+file(GLOB IMGUI_HEADERS_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
+
+file(GLOB IMGUI_SRC_MISC_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/misc/cpp/*.cpp"
+)
+
+# Add the source files to the project
+add_library(${PROJECT_NAME} STATIC
+			${IMGUI_SRC_FILES}
+			${IMGUI_HEADERS_FILES}
+			${IMGUI_SRC_MISC_FILES}
+			"${CMAKE_CURRENT_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp"
+			"${CMAKE_CURRENT_SOURCE_DIR}/backends/imgui_impl_opengl3.h"
+			"${CMAKE_CURRENT_SOURCE_DIR}/backends/imgui_impl_opengl3_loader.h"
+			# "${CMAKE_CURRENT_SOURCE_DIR}/backends/imgui_impl_glfw.cpp"
+			# "${CMAKE_CURRENT_SOURCE_DIR}/backends/imgui_impl_glfw.h"
+)
+
+target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_GLAD=1)
+# target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUSTOM=1)
 
 # Link the glad dll with the required libraries depending on the system
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")

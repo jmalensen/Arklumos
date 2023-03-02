@@ -8,6 +8,8 @@
 
 #include "Arklumos/ImGui/ImGuiLayer.h"
 
+#include "Arklumos/Renderer/Shader.h"
+
 namespace Arklumos
 {
 
@@ -36,6 +38,7 @@ namespace Arklumos
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		std::unique_ptr<Shader> m_Shader;
 
 		static Application *s_Instance;
 	};

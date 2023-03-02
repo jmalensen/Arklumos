@@ -61,3 +61,8 @@ missing X11/extensions/Xfixes.h
 sudo pacman -Ss libxfixes
 
 sudo steamos-readonly enable
+
+//
+Each time a build is triggered by cmake, a script need to be executed in SD
+(with the proper chmod -> chmod +x linuxsd-build.sh)
+./linuxsd-build.sh

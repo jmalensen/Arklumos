@@ -65,11 +65,25 @@ namespace Arklumos
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
 
+		// This variable keeps track of the index of the currently enabled vertex attribute.
 		uint32_t index = 0;
+		// This line retrieves the layout of the vertex buffer, which specifies the format of the vertex data.
 		const auto &layout = vertexBuffer->GetLayout();
 		for (const auto &element : layout)
 		{
+			// This line enables the vertex attribute at the current index.
 			glEnableVertexAttribArray(index);
+
+			/*
+				Specifies how OpenGL should interpret the data at the current vertex attribute. It takes six arguments:
+
+					index: The index of the current vertex attribute.
+					element.GetComponentCount(): The number of components in the current element.
+					ShaderDataTypeToOpenGLBaseType(element.Type): The data type of the current element, translated from the custom shader data type to the corresponding OpenGL base type.
+					element.Normalized ? GL_TRUE : GL_FALSE: Whether the data should be normalized.
+					layout.GetStride(): The distance in bytes between consecutive vertices.
+					(const void *)(uintptr_t)element.Offset: A pointer to the offset of the current element within the vertex data. The uintptr_t cast is used to convert the offset to a pointer-sized integer, which can be used as a void pointer.
+			*/
 			glVertexAttribPointer(index,
 														element.GetComponentCount(),
 														ShaderDataTypeToOpenGLBaseType(element.Type),

@@ -8,6 +8,16 @@
 namespace Arklumos
 {
 
+	/*
+		Implements a static method for creating vertex buffers.
+		A vertex buffer is a region of memory used to store vertex data, which is used by the graphics processing unit (GPU) to render objects on the screen.
+
+		The method takes in a pointer to an array of vertices and the size of that array as parameters.
+		It first checks the current renderer API using the Renderer::GetAPI() method, which returns an enum value indicating the current graphics API being used by the application.
+
+		If the API is set to RendererAPI::None, the method throws an assertion error since no graphics API is currently supported. Otherwise, if the API is set to RendererAPI::OpenGL, the method returns a new instance of the OpenGLVertexBuffer class, which is a subclass of VertexBuffer.
+		If the API is unknown, the method throws another assertion error.
+	*/
 	VertexBuffer *VertexBuffer::Create(float *vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())
@@ -15,6 +25,7 @@ namespace Arklumos
 		case RendererAPI::None:
 			AK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
+
 		case RendererAPI::OpenGL:
 			return new OpenGLVertexBuffer(vertices, size);
 		}
@@ -23,6 +34,14 @@ namespace Arklumos
 		return nullptr;
 	}
 
+	/*
+		Defines a static method Create of the IndexBuffer class, which returns a pointer to an instance of an index buffer.
+		The method takes two arguments: indices, which is a pointer to an array of 32-bit unsigned integers representing the indices of the vertices in the buffer, and size, which is the size of the buffer in bytes.
+
+		The method first calls the Renderer::GetAPI() method, which returns an enumeration value representing the currently active rendering API.
+		It then uses a switch statement to determine which rendering API is being used and creates an instance of the appropriate index buffer implementation (in this case, OpenGLIndexBuffer).
+		If the rendering API is not recognized, an assertion is raised with an error message, and the method returns nullptr.
+	*/
 	IndexBuffer *IndexBuffer::Create(uint32_t *indices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())
@@ -30,6 +49,7 @@ namespace Arklumos
 		case RendererAPI::None:
 			AK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
+
 		case RendererAPI::OpenGL:
 			return new OpenGLIndexBuffer(indices, size);
 		}

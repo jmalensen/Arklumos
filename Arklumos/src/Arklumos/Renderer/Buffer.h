@@ -19,6 +19,13 @@ namespace Arklumos
 		Bool
 	};
 
+	/*
+		Defines a function ShaderDataTypeSize that takes a ShaderDataType enum as input and returns the size in bytes of that data type.
+
+		The function uses a switch statement to determine the size of each possible input type.
+		For example, the size of ShaderDataType::Float is 4 bytes, ShaderDataType::Float2 is 8 bytes (4 bytes per float * 2 floats), and so on.
+		If an unknown data type is passed in, an assertion is triggered and the function returns 0.
+	*/
 	static uint32_t ShaderDataTypeSize(ShaderDataType type)
 	{
 		switch (type)
@@ -51,6 +58,24 @@ namespace Arklumos
 		return 0;
 	}
 
+	/*
+		Defines a BufferElement struct, which is used to represent a single element of a buffer.
+		A buffer can be thought of as a contiguous block of memory used to store data, and each element in the buffer represents a single piece of data.
+
+		The BufferElement struct has several member variables:
+
+				Name: a string representing the name of the element
+				Type: an enumeration representing the data type of the element (e.g. float, int, bool)
+				Size: the size of the element in bytes
+				Offset: the offset of the element within the buffer
+				Normalized: a boolean indicating whether the data should be normalized
+
+		The struct also has several methods:
+
+				BufferElement(): a default constructor
+				BufferElement(ShaderDataType type, const std::string &name, bool normalized = false): a constructor that takes a data type, name, and an optional boolean indicating whether the data should be normalized
+				GetComponentCount() const: a method that returns the number of components in the element based on its data type. For example, a float has 1 component, a float2 has 2 components, etc.
+	*/
 	struct BufferElement
 	{
 		std::string Name;
@@ -119,6 +144,19 @@ namespace Arklumos
 		std::vector<BufferElement>::const_iterator end() const { return m_Elements.end(); }
 
 	private:
+		/*
+			Defines a function named CalculateOffsetsAndStride() that calculates the offset and stride of each buffer element in a vertex buffer layout.
+
+			The function iterates over the m_Elements vector which contains information about each buffer element.
+			It starts by initializing the offset variable to zero and the m_Stride variable to zero.
+			Then, for each element in the vector, the function sets the Offset field of the element to the current offset value, which starts at zero and is incremented by the Size of the current element.
+			The Size field of each element is previously calculated using the ShaderDataTypeSize function.
+
+			After processing all elements, the m_Stride variable is set to the total size of the vertex buffer layout, which is the sum of all element sizes.
+
+			In summary, this function calculates the byte offset of each buffer element and the total size of the buffer layout in bytes.
+			These values are used later in the application to upload vertex data to the graphics API.
+		*/
 		void CalculateOffsetsAndStride()
 		{
 			uint32_t offset = 0;

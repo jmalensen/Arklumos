@@ -10,7 +10,7 @@ namespace Arklumos
 	Input *Input::s_Instance = new WindowsInput();
 
 	/*
-		This method checks whether a key on the keyboard is currently pressed or not
+		Checks whether a key on the keyboard is currently pressed or not
 
 		The function IsKeyPressedImpl takes an integer keycode as input, which represents the identifier for a particular key on the keyboard.
 		It then uses the Application class to get a reference to the GLFW window that is currently active. The GetNativeWindow() function returns a pointer to the underlying GLFW window handle.
@@ -26,7 +26,7 @@ namespace Arklumos
 	}
 
 	/*
-		This method checks whether a mouse button is currently pressed or not
+		Checks whether a mouse button is currently pressed or not
 
 		The function takes an integer parameter button that represents the ID of the mouse button that needs to be checked.
 		The function first gets the native window handle from the application's window using Application::Get().GetWindow().GetNativeWindow() and casts it to a GLFW window object using static_cast<GLFWwindow*>. This is required because GLFW is the underlying windowing library being used by the application.

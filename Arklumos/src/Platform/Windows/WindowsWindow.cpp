@@ -5,7 +5,7 @@
 #include "Arklumos/Events/MouseEvent.h"
 #include "Arklumos/Events/KeyEvent.h"
 
-#include <glad/glad.h>
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Arklumos
 {
@@ -57,9 +57,10 @@ namespace Arklumos
 			The vertical sync is enabled by calling the SetVSync function.
 		*/
 		this->m_p_Window = glfwCreateWindow((int)props.Width, (int)props.Height, this->m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(this->m_p_Window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		AK_CORE_ASSERT(status, "Failed to initialize Glad!");
+
+		this->m_p_Context = new OpenGLContext(this->m_p_Window);
+		this->m_p_Context->Init();
+
 		glfwSetWindowUserPointer(this->m_p_Window, &this->m_Data);
 		SetVSync(true);
 
@@ -173,7 +174,7 @@ namespace Arklumos
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(this->m_p_Window);
+		this->m_p_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)

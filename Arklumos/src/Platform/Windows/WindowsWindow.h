@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Arklumos/Window.h"
+#include "Arklumos/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>
 
@@ -31,6 +32,7 @@ namespace Arklumos
 
 	private:
 		GLFWwindow *m_p_Window;
+		GraphicsContext *m_p_Context;
 
 		struct WindowData
 		{

@@ -36,11 +36,11 @@ namespace Arklumos
 #define AK_CORE_INFO(...) ::Arklumos::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define AK_CORE_WARN(...) ::Arklumos::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define AK_CORE_ERROR(...) ::Arklumos::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define AK_CORE_FATAL(...) ::Arklumos::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+#define AK_CORE_CRITICAL(...) ::Arklumos::Log::GetCoreLogger()->critical(__VA_ARGS__)
 
 // Client log macros
 #define AK_TRACE(...) ::Arklumos::Log::GetClientLogger()->trace(__VA_ARGS__)
 #define AK_INFO(...) ::Arklumos::Log::GetClientLogger()->info(__VA_ARGS__)
 #define AK_WARN(...) ::Arklumos::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define AK_ERROR(...) ::Arklumos::Log::GetClientLogger()->error(__VA_ARGS__)
-#define AK_FATAL(...) ::Arklumos::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#define AK_CRITICAL(...) ::Arklumos::Log::GetClientLogger()->critical(__VA_ARGS__)

@@ -11,7 +11,7 @@ namespace Arklumos
 	LayerStack::~LayerStack()
 	{
 		// Delete all the layers (removing every layer pointer)
-		for (Layer *layer : this->m_Layers)
+		for (Layer *layer : m_Layers)
 		{
 			delete layer;
 		}
@@ -26,8 +26,9 @@ namespace Arklumos
 	*/
 	void LayerStack::PushLayer(Layer *layer)
 	{
-		this->m_Layers.emplace(this->m_Layers.begin() + m_LayerInsertIndex, layer);
+		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
 		m_LayerInsertIndex++;
+		layer->OnAttach();
 	}
 
 	/*
@@ -35,7 +36,8 @@ namespace Arklumos
 	*/
 	void LayerStack::PushOverlay(Layer *overlay)
 	{
-		this->m_Layers.emplace_back(overlay);
+		m_Layers.emplace_back(overlay);
+		overlay->OnAttach();
 	}
 
 	/*
@@ -44,11 +46,12 @@ namespace Arklumos
 	*/
 	void LayerStack::PopLayer(Layer *layer)
 	{
-		auto it = std::find(this->m_Layers.begin(), this->m_Layers.end(), layer);
-		if (it != this->m_Layers.end())
+		auto it = std::find(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex, layer);
+		if (it != m_Layers.end())
 		{
-			this->m_Layers.erase(it);
-			this->m_LayerInsertIndex--;
+			layer->OnDetach();
+			m_Layers.erase(it);
+			m_LayerInsertIndex--;
 		}
 	}
 
@@ -57,10 +60,11 @@ namespace Arklumos
 	*/
 	void LayerStack::PopOverlay(Layer *overlay)
 	{
-		auto it = std::find(this->m_Layers.begin(), this->m_Layers.end(), overlay);
-		if (it != this->m_Layers.end())
+		auto it = std::find(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(), overlay);
+		if (it != m_Layers.end())
 		{
-			this->m_Layers.erase(it);
+			overlay->OnDetach();
+			m_Layers.erase(it);
 		}
 	}
 

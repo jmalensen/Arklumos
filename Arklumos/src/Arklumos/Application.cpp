@@ -13,45 +13,13 @@ namespace Arklumos
 
 	Application *Application::s_Instance = nullptr;
 
-	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
-	{
-		switch (type)
-		{
-		case Arklumos::ShaderDataType::Float:
-			return GL_FLOAT;
-		case Arklumos::ShaderDataType::Float2:
-			return GL_FLOAT;
-		case Arklumos::ShaderDataType::Float3:
-			return GL_FLOAT;
-		case Arklumos::ShaderDataType::Float4:
-			return GL_FLOAT;
-		case Arklumos::ShaderDataType::Mat3:
-			return GL_FLOAT;
-		case Arklumos::ShaderDataType::Mat4:
-			return GL_FLOAT;
-		case Arklumos::ShaderDataType::Int:
-			return GL_INT;
-		case Arklumos::ShaderDataType::Int2:
-			return GL_INT;
-		case Arklumos::ShaderDataType::Int3:
-			return GL_INT;
-		case Arklumos::ShaderDataType::Int4:
-			return GL_INT;
-		case Arklumos::ShaderDataType::Bool:
-			return GL_BOOL;
-		}
-
-		AK_CORE_ASSERT(false, "Unknown ShaderDataType!");
-		return 0;
-	}
-
 	Application::Application()
 	{
 		AK_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		this->m_Window = std::unique_ptr<Window>(Window::Create());
-		this->m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		/*
 			Creates a new ImGuiLayer object and assigns it to the m_ImGuiLayer pointer variable of the current object.
@@ -60,46 +28,46 @@ namespace Arklumos
 			The PushOverlay function is used to add the m_ImGuiLayer as an overlay to the rendering pipeline.
 			In other words, it will ensure that the ImGuiLayer is rendered on top of all other layers or objects in the scene.
 		*/
-		this->m_ImGuiLayer = new ImGuiLayer();
-		PushOverlay(this->m_ImGuiLayer);
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_ImGuiLayer);
 
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
+		m_VertexArray.reset(VertexArray::Create());
 
 		float vertices[3 * 7] = {
 				-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
 				0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
 				0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f};
 
-		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-
-		{
-			BufferLayout layout = {
-					{ShaderDataType::Float3, "a_Position"},
-					{ShaderDataType::Float4, "a_Color"}};
-
-			m_VertexBuffer->SetLayout(layout);
-		}
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-
-		uint32_t index = 0;
-		const auto &layout = m_VertexBuffer->GetLayout();
-		for (const auto &element : layout)
-		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index,
-														element.GetComponentCount(),
-														ShaderDataTypeToOpenGLBaseType(element.Type),
-														element.Normalized ? GL_TRUE : GL_FALSE,
-														layout.GetStride(),
-														(const void *)(uintptr_t)element.Offset);
-			index++;
-		}
+		std::shared_ptr<VertexBuffer> vertexBuffer;
+		vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+		BufferLayout layout = {
+				{ShaderDataType::Float3, "a_Position"},
+				{ShaderDataType::Float4, "a_Color"}};
+		vertexBuffer->SetLayout(layout);
+		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
 		uint32_t indices[3] = {0, 1, 2};
-		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		std::shared_ptr<IndexBuffer> indexBuffer;
+		indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_VertexArray->SetIndexBuffer(indexBuffer);
+
+		m_SquareVA.reset(VertexArray::Create());
+
+		float squareVertices[3 * 4] = {
+				-0.75f, -0.75f, 0.0f,
+				0.75f, -0.75f, 0.0f,
+				0.75f, 0.75f, 0.0f,
+				-0.75f, 0.75f, 0.0f};
+
+		std::shared_ptr<VertexBuffer> squareVB;
+		squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		squareVB->SetLayout({{ShaderDataType::Float3, "a_Position"}});
+		m_SquareVA->AddVertexBuffer(squareVB);
+
+		uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
+		std::shared_ptr<IndexBuffer> squareIB;
+		squareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		m_SquareVA->SetIndexBuffer(squareIB);
 
 		std::string vertexSrc = R"(
 			#version 330 core
@@ -129,7 +97,32 @@ namespace Arklumos
 			}
 		)";
 
-		this->m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
+		m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
+
+		std::string blueShaderVertexSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) in vec3 a_Position;
+			out vec3 v_Position;
+			void main()
+			{
+				v_Position = a_Position;
+				gl_Position = vec4(a_Position, 1.0);	
+			}
+		)";
+
+		std::string blueShaderFragmentSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) out vec4 color;
+			in vec3 v_Position;
+			void main()
+			{
+				color = vec4(0.2, 0.3, 0.8, 1.0);
+			}
+		)";
+
+		m_BlueShader.reset(new Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
 	}
 
 	Application::~Application()
@@ -138,14 +131,12 @@ namespace Arklumos
 
 	void Application::PushLayer(Layer *layer)
 	{
-		this->m_LayerStack.PushLayer(layer);
-		layer->OnAttach();
+		m_LayerStack.PushLayer(layer);
 	}
 
 	void Application::PushOverlay(Layer *layer)
 	{
-		this->m_LayerStack.PushOverlay(layer);
-		layer->OnAttach();
+		m_LayerStack.PushOverlay(layer);
 	}
 
 	void Application::OnEvent(Event &e)
@@ -157,15 +148,12 @@ namespace Arklumos
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
-		// The AK_CORE_TRACE macro is then used to print out the event to the console for debugging purposes.
-		AK_CORE_TRACE("{0}", e);
-
 		/*
 			The function then iterates through the m_LayerStack vector from back to front, calling the OnEvent function of each layer in turn.
 			The OnEvent function of each layer is responsible for handling the event if it is applicable.
 			If the event is marked as "handled" by one of the layers, the iteration is stopped using the break keyword.
 		*/
-		for (auto it = this->m_LayerStack.end(); it != this->m_LayerStack.begin();)
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
 			(*--it)->OnEvent(e);
 			if (e.Handled)
@@ -177,25 +165,28 @@ namespace Arklumos
 
 	void Application::Run()
 	{
-		while (this->m_Running)
+		while (m_Running)
 		{
 			glClearColor(0.1f, 0.1f, 0.1f, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			this->m_Shader->Bind();
+			m_BlueShader->Bind();
+			m_SquareVA->Bind();
+			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
-			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_Shader->Bind();
+			m_VertexArray->Bind();
+			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			// Update for each layer
-			for (Layer *layer : this->m_LayerStack)
+			for (Layer *layer : m_LayerStack)
 			{
 				layer->OnUpdate();
 			}
 
 			// Starts the ImGui rendering process
 			// Begin() is a method provided by the ImGuiLayer class that initializes the rendering context
-			this->m_ImGuiLayer->Begin();
+			m_ImGuiLayer->Begin();
 
 			// Iterates over all the layers in the m_LayerStack and calls their OnImGuiRender() method
 			for (Layer *layer : m_LayerStack)
@@ -204,16 +195,16 @@ namespace Arklumos
 			}
 
 			// Marks the end of the ImGui rendering process
-			this->m_ImGuiLayer->End();
+			m_ImGuiLayer->End();
 
 			// Updates the application window with the rendered ImGui elements and performs any other necessary updates
-			this->m_Window->OnUpdate();
+			m_Window->OnUpdate();
 		}
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent &e)
 	{
-		this->m_Running = false;
+		m_Running = false;
 		return true;
 	}
 

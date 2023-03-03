@@ -6,18 +6,16 @@
 #include "Arklumos/Events/Event.h"
 #include "Arklumos/Events/ApplicationEvent.h"
 
-#include "Arklumos/ImGui/ImGuiLayer.h"
+#include "Arklumos/Core/Timestep.h"
 
-#include "Arklumos/Renderer/Shader.h"
-#include "Arklumos/Renderer/Buffer.h"
-#include "Arklumos/Renderer/VertexArray.h"
+#include "Arklumos/ImGui/ImGuiLayer.h"
 
 #include "Arklumos/Renderer/OrthographicCamera.h"
 
 namespace Arklumos
 {
 
-	class ARKLUMOS_API Application
+	class Application
 	{
 	public:
 		Application();
@@ -42,13 +40,7 @@ namespace Arklumos
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<VertexArray> m_VertexArray;
-
-		std::shared_ptr<Shader> m_BlueShader;
-		std::shared_ptr<VertexArray> m_SquareVA;
-
-		OrthographicCamera m_Camera;
+		float m_LastFrameTime = 0.0f;
 
 		static Application *s_Instance;
 	};

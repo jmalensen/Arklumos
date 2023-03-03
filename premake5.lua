@@ -17,6 +17,7 @@ IncludeDir["GLFW"] = "Arklumos/vendor/GLFW/include"
 IncludeDir["glad"] = "Arklumos/vendor/glad/include"
 IncludeDir["ImGui"] = "Arklumos/vendor/imgui"
 IncludeDir["glm"] = "Arklumos/vendor/glm"
+IncludeDir["stb_image"] = "Arklumos/vendor/stb_image"
 
 group "Dependencies"
 	include "Arklumos/vendor/GLFW"
@@ -41,6 +42,8 @@ project "Arklumos"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
@@ -57,7 +60,8 @@ project "Arklumos"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links 

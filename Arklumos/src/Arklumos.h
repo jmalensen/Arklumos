@@ -20,6 +20,7 @@
 
 #include "Arklumos/Renderer/Buffer.h"
 #include "Arklumos/Renderer/Shader.h"
+#include "Arklumos/Renderer/Texture.h"
 #include "Arklumos/Renderer/VertexArray.h"
 
 #include "Arklumos/Renderer/OrthographicCamera.h"

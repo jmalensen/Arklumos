@@ -77,6 +77,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glm)
 
+include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/stb_image)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/stb_image)
+
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/src)
 
 # if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -103,10 +106,10 @@ add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
 # Link the Arklumos dll with the glfw, glad, imgui libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glfw)
-	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui glm)
+	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui glm stb_image)
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_link_libraries(${PROJECT_NAME} glad glfw imgui glm)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)
+	target_link_libraries(${PROJECT_NAME} glad glfw imgui glm stb_image)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)
 endif()
 
 

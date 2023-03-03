@@ -23,6 +23,8 @@ namespace Arklumos
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
+		Renderer::Init();
+
 		/*
 			Creates a new ImGuiLayer object and assigns it to the m_ImGuiLayer pointer variable of the current object.
 			Then, it calls the PushOverlay function of the current object, passing the m_ImGuiLayer pointer as an argument.

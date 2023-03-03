@@ -90,8 +90,6 @@ namespace Arklumos
 	// using template metaprogramming = allow dispatching of different kinds of events
 	class EventDispatcher
 	{
-		template <typename T>
-		using EventFn = std::function<bool(T &)>;
 
 	public:
 		EventDispatcher(Event &event)
@@ -99,17 +97,18 @@ namespace Arklumos
 		{
 		}
 
-		template <typename T>
+		// F will be deduced by the compiler
+		template <typename T, typename F>
 		/* The Dispatch function is a template function that takes a function object of type EventFn<T>, where T is a type derived from the Event class
 			If the type of the event matches the static type of T, the function object is called with a casted Event object of type T.
 			The result of the function is stored in the Handled member of the Event object, and the function returns true.
 			If the event types do not match, the function returns false.
 		*/
-		bool Dispatch(EventFn<T> func)
+		bool Dispatch(const F &func)
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.Handled = func(*(T *)&m_Event);
+				m_Event.Handled = func(static_cast<T &>(m_Event));
 				return true;
 			}
 			return false;

@@ -8,6 +8,9 @@ namespace Arklumos
 	class ARKLUMOS_API Input
 	{
 	public:
+		Input(const Input &) = delete;
+		Input &operator=(const Input &) = delete;
+
 		inline static bool IsKeyPressed(int keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
 
 		inline static bool IsMouseButtonPressed(int button) { return s_Instance->IsMouseButtonPressedImpl(button); }
@@ -16,6 +19,7 @@ namespace Arklumos
 		inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
 
 	protected:
+		Input() = default;
 		virtual bool IsKeyPressedImpl(int keycode) = 0;
 
 		virtual bool IsMouseButtonPressedImpl(int button) = 0;

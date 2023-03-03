@@ -3,7 +3,7 @@
 
 #include "Log.h"
 
-#include <glad/glad.h>
+#include "Arklumos/Renderer/Renderer.h"
 
 #include "Input.h"
 namespace Arklumos
@@ -13,7 +13,7 @@ namespace Arklumos
 
 	Application *Application::s_Instance = nullptr;
 
-	Application::Application()
+	Application::Application() : m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
 	{
 		AK_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
@@ -130,13 +130,16 @@ namespace Arklumos
 			
 			layout(location = 0) in vec3 a_Position;
 			layout(location = 1) in vec4 a_Color;
+
+			uniform mat4 u_ViewProjection;
+
 			out vec3 v_Position;
 			out vec4 v_Color;
 			void main()
 			{
 				v_Position = a_Position;
 				v_Color = a_Color;
-				gl_Position = vec4(a_Position, 1.0);	
+				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);	
 			}
 		)";
 
@@ -182,11 +185,14 @@ namespace Arklumos
 			#version 330 core
 			
 			layout(location = 0) in vec3 a_Position;
+
+			uniform mat4 u_ViewProjection;
+
 			out vec3 v_Position;
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0);	
+				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);		
 			}
 		)";
 
@@ -256,32 +262,18 @@ namespace Arklumos
 	{
 		while (m_Running)
 		{
-			// This sets the clear color for the color buffer. The arguments are the red, green, blue, and alpha values for the color, respectively
-			glClearColor(0.1f, 0.1f, 0.1f, 1);
-			// This clears the color buffer. Since we just set the clear color in the previous line, this will fill the entire screen with a dark gray color
-			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+			RenderCommand::Clear();
 
-			// This sets the current shader program to m_BlueShader. A shader program consists of a vertex shader and a fragment shader, which together define how the vertices in the scene should be rendered
-			m_BlueShader->Bind();
-			// This sets the current vertex array to m_SquareVA. A vertex array encapsulates the vertex buffer and index buffer for a mesh, and defines the layout of the vertex data
-			m_SquareVA->Bind();
-			/*
-				This tells OpenGL to render the vertices in the currently bound vertex array as triangles, using the currently bound shader program.
-				The GL_TRIANGLES argument specifies the primitive type to use (triangles), and the m_SquareVA->GetIndexBuffer()->GetCount() argument specifies the number of indices to use for rendering.
-				The GL_UNSIGNED_INT argument specifies the type of the indices in the index buffer, and the nullptr argument specifies the offset from the start of the index buffer.
-			*/
-			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_Camera.SetPosition({0.5f, 0.5f, 0.0f});
+			m_Camera.SetRotation(45.0f);
 
-			// This sets the current shader program to m_Shader.
-			m_Shader->Bind();
-			// This sets the current vertex array to m_VertexArray
-			m_VertexArray->Bind();
-			/*
-				This tells OpenGL to render the vertices in the currently bound vertex array as triangles, using the currently bound shader program.
-				The GL_TRIANGLES argument specifies the primitive type to use (triangles), and the m_VertexArray->GetIndexBuffer()->GetCount() argument specifies the number of indices to use for rendering.
-				The GL_UNSIGNED_INT argument specifies the type of the indices in the index buffer, and the nullptr argument specifies the offset from the start of the index buffer.
-			*/
-			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::BeginScene(m_Camera);
+
+			Renderer::Submit(m_BlueShader, m_SquareVA);
+			Renderer::Submit(m_Shader, m_VertexArray);
+
+			Renderer::EndScene();
 
 			// Update for each layer
 			for (Layer *layer : m_LayerStack)

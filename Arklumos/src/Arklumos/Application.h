@@ -12,6 +12,8 @@
 #include "Arklumos/Renderer/Buffer.h"
 #include "Arklumos/Renderer/VertexArray.h"
 
+#include "Arklumos/Renderer/OrthographicCamera.h"
+
 namespace Arklumos
 {
 
@@ -45,6 +47,8 @@ namespace Arklumos
 
 		std::shared_ptr<Shader> m_BlueShader;
 		std::shared_ptr<VertexArray> m_SquareVA;
+
+		OrthographicCamera m_Camera;
 
 		static Application *s_Instance;
 	};

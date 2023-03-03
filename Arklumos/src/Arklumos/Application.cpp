@@ -60,6 +60,7 @@ namespace Arklumos
 		*/
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
 		/*
 			The function then iterates through the m_LayerStack vector from back to front, calling the OnEvent function of each layer in turn.
@@ -85,9 +86,12 @@ namespace Arklumos
 			m_LastFrameTime = time;
 
 			// Update for each layer
-			for (Layer *layer : m_LayerStack)
+			if (!m_Minimized)
 			{
-				layer->OnUpdate(timestep);
+				for (Layer *layer : m_LayerStack)
+				{
+					layer->OnUpdate(timestep);
+				}
 			}
 
 			// Starts the ImGui rendering process
@@ -112,6 +116,20 @@ namespace Arklumos
 	{
 		m_Running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent &e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+		return false;
 	}
 
 }

@@ -11,6 +11,7 @@
 #include "Arklumos/Input.h"
 #include "Arklumos/KeyCodes.h"
 #include "Arklumos/MouseButtonCodes.h"
+#include "Arklumos/OrthographicCameraController.h"
 
 #include "Arklumos/ImGui/ImGuiLayer.h"
 

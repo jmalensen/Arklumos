@@ -3,6 +3,9 @@ _old
 build
 lib/*
 
+# Binaries
+**/bin/
+
 #Ignore executables
 /bin
 bin-int
@@ -15,6 +18,13 @@ dependencies
 .vscode/launch.json
 .vscode/settings.json
 .vscode/tasks.json
+
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
 
 #Ignore CMakeCache.txt
 CMakeCache.txt

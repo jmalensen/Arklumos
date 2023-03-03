@@ -16,7 +16,7 @@ namespace Arklumos
 		If the renderer API is set to an unknown value, an assertion failure is thrown with an error message indicating that the renderer API is unknown. In this case, the method returns a null pointer.
 		Overall, this code is a factory method that creates a new vertex array object, depending on the current renderer API.
 	*/
-	VertexArray *VertexArray::Create()
+	Ref<VertexArray> VertexArray::Create()
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -25,7 +25,7 @@ namespace Arklumos
 			return nullptr;
 
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexArray();
+			return std::make_shared<OpenGLVertexArray>();
 		}
 
 		AK_CORE_ASSERT(false, "Unknown RendererAPI!");

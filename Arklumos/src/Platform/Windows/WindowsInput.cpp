@@ -7,7 +7,7 @@
 namespace Arklumos
 {
 
-	Input *Input::s_Instance = new WindowsInput();
+	Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
 
 	/*
 		Checks whether a key on the keyboard is currently pressed or not

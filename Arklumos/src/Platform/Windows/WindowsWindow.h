@@ -32,7 +32,7 @@ namespace Arklumos
 
 	private:
 		GLFWwindow *m_p_Window;
-		GraphicsContext *m_p_Context;
+		Scope<GraphicsContext> m_p_Context;
 
 		struct WindowData
 		{

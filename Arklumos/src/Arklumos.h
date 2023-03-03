@@ -18,6 +18,7 @@
 
 // ---Renderer------------------------
 #include "Arklumos/Renderer/Renderer.h"
+#include "Arklumos/Renderer/Renderer2D.h"
 #include "Arklumos/Renderer/RenderCommand.h"
 
 #include "Arklumos/Renderer/Buffer.h"
@@ -26,8 +27,5 @@
 #include "Arklumos/Renderer/VertexArray.h"
 
 #include "Arklumos/Renderer/OrthographicCamera.h"
-// -----------------------------------
 
-// ---Entry Point---------------------
-#include "Arklumos/Core/EntryPoint.h"
 // -----------------------------------

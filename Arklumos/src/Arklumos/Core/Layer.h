@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arklumos/Core.h"
+#include "Arklumos/Core/Core.h"
 #include "Arklumos/Core/Timestep.h"
 #include "Arklumos/Events/Event.h"
 

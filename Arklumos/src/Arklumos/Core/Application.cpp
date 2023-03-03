@@ -1,7 +1,7 @@
 #include "akpch.h"
 #include "Application.h"
 
-#include "Log.h"
+#include "Arklumos/Core/Log.h"
 
 #include "Arklumos/Renderer/Renderer.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arklumos/Window.h"
+#include "Arklumos/Core/Window.h"
 #include "Arklumos/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>

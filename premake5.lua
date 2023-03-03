@@ -83,7 +83,6 @@ project "Arklumos"
 
 		defines
 		{
-			"AK_PLATFORM_WINDOWS",
 			"AK_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
@@ -139,11 +138,6 @@ project "Testbox"
 	filter "system:windows"
 		cppdialect "C++20"
 		systemversion "latest"
-
-		defines
-		{
-			"AK_PLATFORM_WINDOWS"
-		}
 
 	filter "configurations:Debug"
 		defines "AK_DEBUG"

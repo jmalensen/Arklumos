@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arklumos/Layer.h"
+#include "Arklumos/Core/Layer.h"
 
 #include "Arklumos/Events/ApplicationEvent.h"
 #include "Arklumos/Events/KeyEvent.h"

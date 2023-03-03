@@ -5,7 +5,7 @@
 #include "backends/imgui_impl_glfw.cpp"
 #include "backends/imgui_impl_opengl3.cpp"
 
-#include "Arklumos/Application.h"
+#include "Arklumos/Core/Application.h"
 
 // TODO: Temp ?
 #include <GLFW/glfw3.h>

@@ -13,6 +13,7 @@ namespace Arklumos
 		// Delete all the layers (removing every layer pointer)
 		for (Layer *layer : m_Layers)
 		{
+			layer->OnDetach();
 			delete layer;
 		}
 	}

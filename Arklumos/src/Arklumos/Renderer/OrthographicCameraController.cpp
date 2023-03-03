@@ -1,8 +1,8 @@
 #include "akpch.h"
 #include "OrthographicCameraController.h"
 
-#include "Arklumos/Input.h"
-#include "Arklumos/KeyCodes.h"
+#include "Arklumos/Core/Input.h"
+#include "Arklumos/Core/KeyCodes.h"
 
 namespace Arklumos
 {

@@ -157,7 +157,9 @@ namespace Arklumos
 			glDeleteProgram(program);
 
 			for (auto id : glShaderIDs)
+			{
 				glDeleteShader(id);
+			}
 
 			AK_CORE_ERROR("{0}", infoLog.data());
 			AK_CORE_ASSERT(false, "Shader link failure!");
@@ -165,7 +167,10 @@ namespace Arklumos
 		}
 
 		for (auto id : glShaderIDs)
+		{
 			glDetachShader(program, id);
+			glDeleteShader(id);
+		}
 	}
 
 	void OpenGLShader::Bind() const

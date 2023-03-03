@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "Arklumos/Core.h"
+#include "Arklumos/Core/Core.h"
 
 namespace Arklumos
 {

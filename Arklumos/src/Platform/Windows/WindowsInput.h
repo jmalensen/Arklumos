@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arklumos/Input.h"
+#include "Arklumos/Core/Input.h"
 
 namespace Arklumos
 {

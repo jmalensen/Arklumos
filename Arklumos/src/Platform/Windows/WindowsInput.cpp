@@ -1,7 +1,7 @@
 #include "akpch.h"
 #include "WindowsInput.h"
 
-#include "Arklumos/Application.h"
+#include "Arklumos/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace Arklumos

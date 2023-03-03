@@ -15,7 +15,6 @@
 							"_DEBUG",
 							"UNICODE",
 							"_UNICODE",
-							"DAK_PLATFORM_WINDOWS",
 							"DAK_BUILD_DLL",
 							"DAK_DEBUG",
 							"DGLFW_INCLUDE_NONE"

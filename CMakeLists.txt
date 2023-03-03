@@ -13,13 +13,6 @@ if(UNIX AND NOT APPLE)
 
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-	##TODO: To be tested For Linux
-	# Set path to librt.a
-	#link_directories(/path/to/librt)
-	#the second one is supposed to be better
-	#target_link_libraries(my_target_name PRIVATE /path/to/librt.a)
-	##To be tested For Linux
-
   # set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
   # list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 endif()
@@ -123,12 +116,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" OUTPUT_NAME "Arklumos
 # (here to specify it's for windows and to build a dll)
 # GLFW_INCLUDE_NONE is for glad to work with glfw
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	#Define AK_PLATFORM_WINDOWS
-	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_WINDOWS AK_DEBUG GLFW_INCLUDE_NONE)
+	#Define MACROS
+	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_DEBUG GLFW_INCLUDE_NONE)
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	#Define AK_PLATFORM_LINUX (check if GLFW_INCLUDE_NONE is still required)
-	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_PLATFORM_LINUX AK_DEBUG GLFW_INCLUDE_NONE)
+	#Define MACROS
+	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_DEBUG GLFW_INCLUDE_NONE)
 endif()
 
 
@@ -151,11 +144,11 @@ target_link_libraries(Testbox PRIVATE ${PROJECT_NAME} imgui)
 # Define macros for the Testbox
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	#Define AK_PLATFORM_WINDOWS
-	target_compile_definitions(Testbox PRIVATE AK_PLATFORM_WINDOWS)
+	#target_compile_definitions(Testbox PRIVATE AK_PLATFORM_WINDOWS)
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	#Define AK_PLATFORM_LINUX
-	target_compile_definitions(Testbox PRIVATE AK_PLATFORM_LINUX)
+	#target_compile_definitions(Testbox PRIVATE AK_PLATFORM_LINUX)
 endif()
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)

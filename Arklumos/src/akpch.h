@@ -15,7 +15,7 @@
 
 #include "Arklumos/Core/Log.h"
 
-// #include "Arklumos/Debug/Instrumentor.h"
+#include "Arklumos/Debug/Instrumentor.h"
 
 #ifdef AK_PLATFORM_WINDOWS
 #include <Windows.h>

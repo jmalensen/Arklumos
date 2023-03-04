@@ -46,3 +46,7 @@ Makefile
 #CMake files to spare because of the ImGui submodule
 Arklumos/vendor/imgui/cmake_install.cmake
 Arklumos/vendor/imgui/CMakeLists.txt
+
+ArklumosProfile-Runtime.json
+ArklumosProfile-Startup.json
+ArklumosProfile-Shutdown.json

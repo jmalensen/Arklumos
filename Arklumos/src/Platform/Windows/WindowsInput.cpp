@@ -6,7 +6,6 @@
 
 namespace Arklumos
 {
-
 	/*
 		Checks whether a key on the keyboard is currently pressed or not
 

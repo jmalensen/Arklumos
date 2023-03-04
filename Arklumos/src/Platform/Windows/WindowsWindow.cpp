@@ -48,7 +48,9 @@ namespace Arklumos
 
 		if (s_GLFWWindowCount == 0)
 		{
+			AK_CORE_INFO("Initializing GLFW");
 			// AK_PROFILE_SCOPE("Initializing GLFW");
+
 			int success = glfwInit();
 			AK_CORE_ASSERT(success, "Could not intialize GLFW!");
 

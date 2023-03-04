@@ -5,7 +5,7 @@
 namespace Arklumos
 {
 
-	class ARKLUMOS_API Input
+	class Input
 	{
 	public:
 		Input(const Input &) = delete;

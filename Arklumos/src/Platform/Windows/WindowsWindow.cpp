@@ -1,5 +1,5 @@
 #include "akpch.h"
-#include "WindowsWindow.h"
+#include "Platform/Windows/WindowsWindow.h"
 
 #include "Arklumos/Events/ApplicationEvent.h"
 #include "Arklumos/Events/MouseEvent.h"
@@ -18,9 +18,9 @@ namespace Arklumos
 		AK_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-	Window *Window::Create(const WindowProps &props)
+	Scope<Window> Window::Create(const WindowProps &props)
 	{
-		return new WindowsWindow(props);
+		return CreateScope<WindowsWindow>(props);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps &props)
@@ -58,7 +58,7 @@ namespace Arklumos
 		m_p_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		++s_GLFWWindowCount;
 
-		m_p_Context = CreateScope<OpenGLContext>(m_p_Window);
+		m_p_Context = GraphicsContext::Create(m_p_Window);
 		m_p_Context->Init();
 
 		glfwSetWindowUserPointer(m_p_Window, &m_Data);
@@ -169,7 +169,9 @@ namespace Arklumos
 	void WindowsWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_p_Window);
-		if (--s_GLFWWindowCount == 0)
+		--s_GLFWWindowCount;
+
+		if (s_GLFWWindowCount == 0)
 		{
 			AK_CORE_INFO("Terminating GLFW");
 			glfwTerminate();

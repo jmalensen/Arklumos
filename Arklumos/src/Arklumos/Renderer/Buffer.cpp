@@ -1,7 +1,7 @@
 #include "akpch.h"
-#include "Buffer.h"
+#include "Arklumos/Renderer/Buffer.h"
 
-#include "Renderer.h"
+#include "Arklumos/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/OpenGLBuffer.h"
 
@@ -18,7 +18,7 @@ namespace Arklumos
 		If the API is set to RendererAPI::None, the method throws an assertion error since no graphics API is currently supported. Otherwise, if the API is set to RendererAPI::OpenGL, the method returns a new instance of the OpenGLVertexBuffer class, which is a subclass of VertexBuffer.
 		If the API is unknown, the method throws another assertion error.
 	*/
-	VertexBuffer *VertexBuffer::Create(float *vertices, uint32_t size)
+	Ref<VertexBuffer> VertexBuffer::Create(float *vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -27,7 +27,7 @@ namespace Arklumos
 			return nullptr;
 
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexBuffer(vertices, size);
+			return CreateRef<OpenGLVertexBuffer>(vertices, size);
 		}
 
 		AK_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -42,7 +42,7 @@ namespace Arklumos
 		It then uses a switch statement to determine which rendering API is being used and creates an instance of the appropriate index buffer implementation (in this case, OpenGLIndexBuffer).
 		If the rendering API is not recognized, an assertion is raised with an error message, and the method returns nullptr.
 	*/
-	IndexBuffer *IndexBuffer::Create(uint32_t *indices, uint32_t size)
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t *indices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -51,7 +51,7 @@ namespace Arklumos
 			return nullptr;
 
 		case RendererAPI::API::OpenGL:
-			return new OpenGLIndexBuffer(indices, size);
+			return CreateRef<OpenGLIndexBuffer>(indices, size);
 		}
 
 		AK_CORE_ASSERT(false, "Unknown RendererAPI!");

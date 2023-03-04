@@ -62,9 +62,8 @@ namespace Arklumos
 		return category;                            \
 	}
 
-	class ARKLUMOS_API Event
+	class Event
 	{
-		friend class EventDispatcher;
 
 	public:
 		bool Handled = false;

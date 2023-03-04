@@ -1,7 +1,7 @@
 #include "akpch.h"
-#include "Shader.h"
+#include "Arklumos/Renderer/Shader.h"
 
-#include "Renderer.h"
+#include "Arklumos/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Arklumos
@@ -16,7 +16,7 @@ namespace Arklumos
 			return nullptr;
 
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLShader>(filepath);
+			return CreateRef<OpenGLShader>(filepath);
 		}
 
 		AK_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -32,7 +32,7 @@ namespace Arklumos
 			return nullptr;
 
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
+			return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
 		}
 
 		AK_CORE_ASSERT(false, "Unknown RendererAPI!");

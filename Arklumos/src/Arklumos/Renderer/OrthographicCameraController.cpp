@@ -1,5 +1,5 @@
 #include "akpch.h"
-#include "OrthographicCameraController.h"
+#include "Arklumos/Renderer/OrthographicCameraController.h"
 
 #include "Arklumos/Core/Input.h"
 #include "Arklumos/Core/KeyCodes.h"

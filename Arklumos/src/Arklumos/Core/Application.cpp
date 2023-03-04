@@ -1,17 +1,15 @@
 #include "akpch.h"
-#include "Application.h"
+#include "Arklumos/Core/Application.h"
 
 #include "Arklumos/Core/Log.h"
 
 #include "Arklumos/Renderer/Renderer.h"
 
-#include "Input.h"
+#include "Arklumos/Core/Input.h"
 
 #include <glfw/glfw3.h>
 namespace Arklumos
 {
-
-#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
 	Application *Application::s_Instance = nullptr;
 
@@ -20,8 +18,8 @@ namespace Arklumos
 		AK_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create());
-		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_Window = Window::Create();
+		m_Window->SetEventCallback(AK_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
 
@@ -40,6 +38,7 @@ namespace Arklumos
 
 	Application::~Application()
 	{
+		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer *layer)
@@ -59,8 +58,8 @@ namespace Arklumos
 			In this case, the WindowCloseEvent type is checked and if it matches the event type, the OnWindowClose function is invoked using a macro called BIND_EVENT_FN.
 		*/
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+		dispatcher.Dispatch<WindowCloseEvent>(AK_BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(AK_BIND_EVENT_FN(Application::OnWindowResize));
 
 		/*
 			The function then iterates through the m_LayerStack vector from back to front, calling the OnEvent function of each layer in turn.

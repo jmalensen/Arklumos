@@ -1,8 +1,8 @@
 #pragma once
 
 #include "akpch.h"
-#include "Application.h"
-#include "Log.h"
+#include "Arklumos/Core/Application.h"
+#include "Arklumos/Core/Log.h"
 
 #ifdef AK_PLATFORM_WINDOWS
 

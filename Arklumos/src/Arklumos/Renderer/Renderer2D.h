@@ -1,8 +1,8 @@
 #pragma once
 
-#include "OrthographicCamera.h"
+#include "Arklumos/Renderer/OrthographicCamera.h"
 
-#include "Texture.h"
+#include "Arklumos/Renderer/Texture.h"
 
 namespace Arklumos
 {

@@ -2,6 +2,8 @@
 
 // For use by Arklumos applications
 
+#include "Arklumos/Core/Core.h"
+
 #include "Arklumos/Core/Application.h"
 #include "Arklumos/Core/Layer.h"
 #include "Arklumos/Core/Log.h"

@@ -1,7 +1,7 @@
 #include "akpch.h"
-#include "VertexArray.h"
+#include "Arklumos/Renderer/VertexArray.h"
 
-#include "Renderer.h"
+#include "Arklumos/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace Arklumos
@@ -25,7 +25,7 @@ namespace Arklumos
 			return nullptr;
 
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLVertexArray>();
+			return CreateRef<OpenGLVertexArray>();
 		}
 
 		AK_CORE_ASSERT(false, "Unknown RendererAPI!");

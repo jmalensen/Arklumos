@@ -1,7 +1,7 @@
 #include "akpch.h"
-#include "Texture.h"
+#include "Arklumos/Renderer/Texture.h"
 
-#include "Renderer.h"
+#include "Arklumos/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace Arklumos

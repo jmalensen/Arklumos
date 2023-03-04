@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core.h"
+#include "Arklumos/Core/Core.h"
 
 // This ignores all warnings raised inside External headers
 #pragma warning(push, 0)
@@ -12,7 +12,7 @@
 namespace Arklumos
 {
 
-	class ARKLUMOS_API Log
+	class Log
 	{
 	public:
 		static void Init();
@@ -21,12 +21,12 @@ namespace Arklumos
 			The functions GetCoreLogger() and GetClientLogger() are defined inline and return references to the static s_CoreLogger and s_ClientLogger shared pointers, respectively.
 			These functions provide convenient access to the logger objects from other parts of the application.
 		*/
-		inline static std::shared_ptr<spdlog::logger> &GetCoreLogger() { return s_CoreLogger; }
-		inline static std::shared_ptr<spdlog::logger> &GetClientLogger() { return s_ClientLogger; }
+		inline static Ref<spdlog::logger> &GetCoreLogger() { return s_CoreLogger; }
+		inline static Ref<spdlog::logger> &GetClientLogger() { return s_ClientLogger; }
 
 	private:
-		static std::shared_ptr<spdlog::logger> s_CoreLogger;
-		static std::shared_ptr<spdlog::logger> s_ClientLogger;
+		static Ref<spdlog::logger> s_CoreLogger;
+		static Ref<spdlog::logger> s_ClientLogger;
 	};
 
 }

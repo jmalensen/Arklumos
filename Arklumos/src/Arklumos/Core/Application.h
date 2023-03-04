@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core.h"
-#include "Window.h"
+#include "Arklumos/Core/Core.h"
+#include "Arklumos/Core/Window.h"
 #include "Arklumos/Core/LayerStack.h"
 #include "Arklumos/Events/Event.h"
 #include "Arklumos/Events/ApplicationEvent.h"

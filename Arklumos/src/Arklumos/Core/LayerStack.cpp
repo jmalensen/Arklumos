@@ -1,12 +1,8 @@
 #include "akpch.h"
-#include "LayerStack.h"
+#include "Arklumos/Core/LayerStack.h"
 
 namespace Arklumos
 {
-
-	LayerStack::LayerStack()
-	{
-	}
 
 	LayerStack::~LayerStack()
 	{

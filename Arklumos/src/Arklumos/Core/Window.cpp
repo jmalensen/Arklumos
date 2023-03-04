@@ -3,6 +3,8 @@
 
 #ifdef AK_PLATFORM_WINDOWS
 #include "Platform/Windows/WindowsWindow.h"
+#elif defined(AK_PLATFORM_LINUX)
+#include "Platform/Windows/WindowsWindow.h"
 #endif
 
 namespace Arklumos
@@ -11,6 +13,8 @@ namespace Arklumos
 	Scope<Window> Window::Create(const WindowProps &props)
 	{
 #ifdef AK_PLATFORM_WINDOWS
+		return CreateScope<WindowsWindow>(props);
+#elif defined(AK_PLATFORM_LINUX)
 		return CreateScope<WindowsWindow>(props);
 #else
 		AK_CORE_ASSERT(false, "Unknown platform!");

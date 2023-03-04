@@ -8,7 +8,7 @@
 							"Arklumos/vendor/GLFW/include",
 							"Arklumos/vendor/glad/include",
 							"Arklumos/vendor/imgui",
-							"Arklumos/vendor/stb_images",
+							"Arklumos/vendor/stb_image",
 							"${workspaceFolder}/**"
 					],
 					"defines": [

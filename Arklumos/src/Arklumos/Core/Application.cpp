@@ -15,6 +15,8 @@ namespace Arklumos
 
 	Application::Application()
 	{
+		AK_PROFILE_FUNCTION();
+
 		AK_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -38,21 +40,31 @@ namespace Arklumos
 
 	Application::~Application()
 	{
+		AK_PROFILE_FUNCTION();
+
 		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer *layer)
 	{
+		AK_PROFILE_FUNCTION();
+
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer *layer)
 	{
+		AK_PROFILE_FUNCTION();
+
 		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 	void Application::OnEvent(Event &e)
 	{
+		AK_PROFILE_FUNCTION();
+
 		/*
 			The EventDispatcher object is constructed with the Event object and provides a Dispatch function that is used to invoke a callback function for the specific event type.
 			In this case, the WindowCloseEvent type is checked and if it matches the event type, the OnWindowClose function is invoked using a macro called BIND_EVENT_FN.
@@ -66,9 +78,9 @@ namespace Arklumos
 			The OnEvent function of each layer is responsible for handling the event if it is applicable.
 			If the event is marked as "handled" by one of the layers, the iteration is stopped using the break keyword.
 		*/
-		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
-			(*--it)->OnEvent(e);
+			(*it)->OnEvent(e);
 			if (e.Handled)
 			{
 				break;
@@ -78,8 +90,12 @@ namespace Arklumos
 
 	void Application::Run()
 	{
+		AK_PROFILE_FUNCTION();
+
 		while (m_Running)
 		{
+			AK_PROFILE_SCOPE("RunLoop");
+
 			float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
@@ -87,24 +103,28 @@ namespace Arklumos
 			// Update for each layer
 			if (!m_Minimized)
 			{
-				for (Layer *layer : m_LayerStack)
 				{
-					layer->OnUpdate(timestep);
+					AK_PROFILE_SCOPE("LayerStack OnUpdate");
+
+					for (Layer *layer : m_LayerStack)
+						layer->OnUpdate(timestep);
 				}
+
+				// Starts the ImGui rendering process
+				// Begin() is a method provided by the ImGuiLayer class that initializes the rendering context
+				m_ImGuiLayer->Begin();
+				{
+					AK_PROFILE_SCOPE("LayerStack OnImGuiRender");
+
+					// Iterates over all the layers in the m_LayerStack and calls their OnImGuiRender() method
+					for (Layer *layer : m_LayerStack)
+					{
+						layer->OnImGuiRender();
+					}
+				}
+				// Marks the end of the ImGui rendering process
+				m_ImGuiLayer->End();
 			}
-
-			// Starts the ImGui rendering process
-			// Begin() is a method provided by the ImGuiLayer class that initializes the rendering context
-			m_ImGuiLayer->Begin();
-
-			// Iterates over all the layers in the m_LayerStack and calls their OnImGuiRender() method
-			for (Layer *layer : m_LayerStack)
-			{
-				layer->OnImGuiRender();
-			}
-
-			// Marks the end of the ImGui rendering process
-			m_ImGuiLayer->End();
 
 			// Updates the application window with the rendered ImGui elements and performs any other necessary updates
 			m_Window->OnUpdate();
@@ -119,6 +139,8 @@ namespace Arklumos
 
 	bool Application::OnWindowResize(WindowResizeEvent &e)
 	{
+		AK_PROFILE_FUNCTION();
+
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			m_Minimized = true;
@@ -130,5 +152,4 @@ namespace Arklumos
 
 		return false;
 	}
-
 }

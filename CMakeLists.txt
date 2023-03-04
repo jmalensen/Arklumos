@@ -137,7 +137,8 @@ endif()
 # (right now, it's easy because there is only file)
 add_executable(Testbox
 		TestBox/src/Testbox.cpp
-		TestBox/src/Testbox2D.cpp)
+		TestBox/src/Testbox2D.cpp
+		TestBox/src/ExampleLayer.cpp)
 
 # Link the Testbox executable with the Arklumos library
 target_link_libraries(Testbox PRIVATE ${PROJECT_NAME} imgui)

@@ -1,27 +1,20 @@
 #pragma once
 
 #include "Arklumos/Events/Event.h"
+#include "Arklumos/Core/Input.h"
 
 namespace Arklumos
 {
-	/// All the events for the mouse
-	// MouseMovedEvent
+
 	class MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(float x, float y)
 				: m_MouseX(x), m_MouseY(y) {}
 
-		inline float GetX() const
-		{
-			return m_MouseX;
-		}
-		inline float GetY() const
-		{
-			return m_MouseY;
-		}
+		inline float GetX() const { return m_MouseX; }
+		inline float GetY() const { return m_MouseY; }
 
-		// For debugging purpose
 		std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -31,28 +24,19 @@ namespace Arklumos
 
 		EVENT_CLASS_TYPE(MouseMoved)
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
-
 	private:
 		float m_MouseX, m_MouseY;
 	};
 
-	// MouseScrolledEvent
 	class MouseScrolledEvent : public Event
 	{
 	public:
 		MouseScrolledEvent(float xOffset, float yOffset)
 				: m_XOffset(xOffset), m_YOffset(yOffset) {}
 
-		inline float GetXOffset() const
-		{
-			return m_XOffset;
-		}
-		inline float GetYOffset() const
-		{
-			return m_YOffset;
-		}
+		inline float GetXOffset() const { return m_XOffset; }
+		inline float GetYOffset() const { return m_YOffset; }
 
-		// For debugging purpose
 		std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -62,37 +46,29 @@ namespace Arklumos
 
 		EVENT_CLASS_TYPE(MouseScrolled)
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
-
 	private:
 		float m_XOffset, m_YOffset;
 	};
 
-	// MouseButtonEvent
 	class MouseButtonEvent : public Event
 	{
 	public:
-		inline int GetMouseButton() const
-		{
-			return m_Button;
-		}
+		inline MouseCode GetMouseButton() const { return m_Button; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
-
 	protected:
-		MouseButtonEvent(int button)
+		MouseButtonEvent(MouseCode button)
 				: m_Button(button) {}
 
-		int m_Button;
+		MouseCode m_Button;
 	};
 
-	// MouseButtonPressedEvent
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonPressedEvent(int button)
+		MouseButtonPressedEvent(MouseCode button)
 				: MouseButtonEvent(button) {}
 
-		// For debugging purpose
 		std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -103,14 +79,12 @@ namespace Arklumos
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
-	// MouseButtonReleasedEvent
 	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonReleasedEvent(int button)
+		MouseButtonReleasedEvent(MouseCode button)
 				: MouseButtonEvent(button) {}
 
-		// For debugging purpose
 		std::string ToString() const override
 		{
 			std::stringstream ss;

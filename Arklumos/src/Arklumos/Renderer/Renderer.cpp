@@ -10,6 +10,8 @@ namespace Arklumos
 
 	void Renderer::Init()
 	{
+		AK_PROFILE_FUNCTION();
+
 		RenderCommand::Init();
 		Renderer2D::Init();
 	}

@@ -25,7 +25,6 @@ namespace Arklumos
 	{
 		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
 		m_LayerInsertIndex++;
-		layer->OnAttach();
 	}
 
 	/*
@@ -34,7 +33,6 @@ namespace Arklumos
 	void LayerStack::PushOverlay(Layer *overlay)
 	{
 		m_Layers.emplace_back(overlay);
-		overlay->OnAttach();
 	}
 
 	/*

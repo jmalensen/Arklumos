@@ -12,7 +12,7 @@
 
 #include "Arklumos/Core/Input.h"
 #include "Arklumos/Core/KeyCodes.h"
-#include "Arklumos/Core/MouseButtonCodes.h"
+#include "Arklumos/Core/MouseCodes.h"
 
 #include "Arklumos/Renderer/OrthographicCameraController.h"
 

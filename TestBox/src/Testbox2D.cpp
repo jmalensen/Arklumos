@@ -11,11 +11,14 @@ Testbox2D::Testbox2D()
 
 void Testbox2D::OnAttach()
 {
+	AK_PROFILE_FUNCTION();
+
 	m_CheckerboardTexture = Arklumos::Texture2D::Create("assets/textures/Checkerboard.png");
 }
 
 void Testbox2D::OnDetach()
 {
+	AK_PROFILE_FUNCTION();
 }
 
 void Testbox2D::OnUpdate(Arklumos::Timestep ts)
@@ -23,10 +26,7 @@ void Testbox2D::OnUpdate(Arklumos::Timestep ts)
 	AK_PROFILE_FUNCTION();
 
 	// Update
-	{
-		AK_PROFILE_SCOPE("CameraController::OnUpdate");
-		m_CameraController.OnUpdate(ts);
-	}
+	m_CameraController.OnUpdate(ts);
 
 	// Render
 	{

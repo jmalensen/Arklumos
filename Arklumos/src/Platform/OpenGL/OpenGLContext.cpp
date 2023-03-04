@@ -16,6 +16,8 @@ namespace Arklumos
 
 	void OpenGLContext::Init()
 	{
+		AK_PROFILE_FUNCTION();
+
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		AK_CORE_ASSERT(status, "Failed to initialize Glad!");
@@ -37,6 +39,8 @@ namespace Arklumos
 
 	void OpenGLContext::SwapBuffers()
 	{
+		AK_PROFILE_FUNCTION();
+
 		glfwSwapBuffers(m_WindowHandle);
 	}
 

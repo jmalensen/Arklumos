@@ -7,8 +7,6 @@
 namespace Arklumos
 {
 
-	Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
-
 	/*
 		Checks whether a key on the keyboard is currently pressed or not
 
@@ -18,10 +16,10 @@ namespace Arklumos
 		The function checks if the state returned by glfwGetKey is either GLFW_PRESS or GLFW_REPEAT, which indicates that the key is currently being pressed.
 		Finally, the function returns a boolean value indicating whether the key is currently pressed or not.
 	*/
-	bool WindowsInput::IsKeyPressedImpl(int keycode)
+	bool WindowsInput::IsKeyPressedImpl(KeyCode key)
 	{
 		auto window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
-		auto state = glfwGetKey(window, keycode);
+		auto state = glfwGetKey(window, static_cast<int32_t>(key));
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
@@ -33,10 +31,10 @@ namespace Arklumos
 		The function then calls glfwGetMouseButton function, passing in the GLFW window object and the button parameter. This function returns the current state of the specified mouse button (GLFW_PRESS or GLFW_RELEASE).
 		Finally, the function checks if the returned state is GLFW_PRESS (button is currently pressed) and returns true, otherwise it returns false.
 	*/
-	bool WindowsInput::IsMouseButtonPressedImpl(int button)
+	bool WindowsInput::IsMouseButtonPressedImpl(MouseCode button)
 	{
 		auto window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
-		auto state = glfwGetMouseButton(window, button);
+		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 		return state == GLFW_PRESS;
 	}
 

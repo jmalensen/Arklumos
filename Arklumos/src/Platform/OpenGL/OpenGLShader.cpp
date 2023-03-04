@@ -27,7 +27,7 @@ namespace Arklumos
 
 	OpenGLShader::OpenGLShader(const std::string &filepath)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
@@ -44,7 +44,7 @@ namespace Arklumos
 	OpenGLShader::OpenGLShader(const std::string &name, const std::string &vertexSrc, const std::string &fragmentSrc)
 			: m_Name(name)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
@@ -54,14 +54,14 @@ namespace Arklumos
 
 	OpenGLShader::~OpenGLShader()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		glDeleteProgram(m_RendererID);
 	}
 
 	std::string OpenGLShader::ReadFile(const std::string &filepath)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
@@ -91,7 +91,7 @@ namespace Arklumos
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string &source)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		std::unordered_map<GLenum, std::string> shaderSources;
 
@@ -120,7 +120,7 @@ namespace Arklumos
 
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string> &shaderSources)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		GLuint program = glCreateProgram();
 		AK_CORE_ASSERT(shaderSources.size() <= 2, "We only support 2 shaders for now");
@@ -198,42 +198,42 @@ namespace Arklumos
 
 	void OpenGLShader::Bind() const
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::Unbind() const
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		glUseProgram(0);
 	}
 
 	void OpenGLShader::SetInt(const std::string &name, int value)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		UploadUniformInt(name, value);
 	}
 
 	void OpenGLShader::SetFloat3(const std::string &name, const glm::vec3 &value)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		UploadUniformFloat3(name, value);
 	}
 
 	void OpenGLShader::SetFloat4(const std::string &name, const glm::vec4 &value)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		UploadUniformFloat4(name, value);
 	}
 
 	void OpenGLShader::SetMat4(const std::string &name, const glm::mat4 &value)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		UploadUniformMat4(name, value);
 	}

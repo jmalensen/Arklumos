@@ -35,7 +35,7 @@ namespace Arklumos
 
 	void OpenGLRendererAPI::Init()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 #ifdef AK_DEBUG
 		glEnable(GL_DEBUG_OUTPUT);

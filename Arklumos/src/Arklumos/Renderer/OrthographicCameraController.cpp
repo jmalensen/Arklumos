@@ -14,7 +14,7 @@ namespace Arklumos
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		if (Input::IsKeyPressed(AK_KEY_A))
 		{
@@ -68,7 +68,7 @@ namespace Arklumos
 
 	void OrthographicCameraController::OnEvent(Event &e)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(AK_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
@@ -77,7 +77,7 @@ namespace Arklumos
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent &e)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		m_ZoomLevel -= e.GetYOffset() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
@@ -87,7 +87,7 @@ namespace Arklumos
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent &e)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);

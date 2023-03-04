@@ -15,7 +15,7 @@ namespace Arklumos
 
 	Application::Application()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		AK_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
@@ -40,14 +40,14 @@ namespace Arklumos
 
 	Application::~Application()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer *layer)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
@@ -55,7 +55,7 @@ namespace Arklumos
 
 	void Application::PushOverlay(Layer *layer)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		m_LayerStack.PushOverlay(layer);
 		layer->OnAttach();
@@ -63,7 +63,7 @@ namespace Arklumos
 
 	void Application::OnEvent(Event &e)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		/*
 			The EventDispatcher object is constructed with the Event object and provides a Dispatch function that is used to invoke a callback function for the specific event type.
@@ -90,11 +90,11 @@ namespace Arklumos
 
 	void Application::Run()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		while (m_Running)
 		{
-			AK_PROFILE_SCOPE("RunLoop");
+			// AK_PROFILE_SCOPE("RunLoop");
 
 			float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;
@@ -104,7 +104,7 @@ namespace Arklumos
 			if (!m_Minimized)
 			{
 				{
-					AK_PROFILE_SCOPE("LayerStack OnUpdate");
+					// AK_PROFILE_SCOPE("LayerStack OnUpdate");
 
 					for (Layer *layer : m_LayerStack)
 						layer->OnUpdate(timestep);
@@ -114,7 +114,7 @@ namespace Arklumos
 				// Begin() is a method provided by the ImGuiLayer class that initializes the rendering context
 				m_ImGuiLayer->Begin();
 				{
-					AK_PROFILE_SCOPE("LayerStack OnImGuiRender");
+					// AK_PROFILE_SCOPE("LayerStack OnImGuiRender");
 
 					// Iterates over all the layers in the m_LayerStack and calls their OnImGuiRender() method
 					for (Layer *layer : m_LayerStack)
@@ -139,7 +139,7 @@ namespace Arklumos
 
 	bool Application::OnWindowResize(WindowResizeEvent &e)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{

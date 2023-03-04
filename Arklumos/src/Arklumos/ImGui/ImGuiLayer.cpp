@@ -23,7 +23,7 @@ namespace Arklumos
 
 	void ImGuiLayer::OnAttach()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -93,7 +93,7 @@ namespace Arklumos
 	*/
 	void ImGuiLayer::OnDetach()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
@@ -111,7 +111,7 @@ namespace Arklumos
 	*/
 	void ImGuiLayer::Begin()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -123,7 +123,7 @@ namespace Arklumos
 	*/
 	void ImGuiLayer::End()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		// Get a reference to the ImGuiIO object for the current ImGui context
 		ImGuiIO &io = ImGui::GetIO();

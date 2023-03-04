@@ -11,32 +11,32 @@ Testbox2D::Testbox2D()
 
 void Testbox2D::OnAttach()
 {
-	AK_PROFILE_FUNCTION();
+	// AK_PROFILE_FUNCTION();
 
 	m_CheckerboardTexture = Arklumos::Texture2D::Create("assets/textures/Checkerboard.png");
 }
 
 void Testbox2D::OnDetach()
 {
-	AK_PROFILE_FUNCTION();
+	// AK_PROFILE_FUNCTION();
 }
 
 void Testbox2D::OnUpdate(Arklumos::Timestep ts)
 {
-	AK_PROFILE_FUNCTION();
+	// AK_PROFILE_FUNCTION();
 
 	// Update
 	m_CameraController.OnUpdate(ts);
 
 	// Render
 	{
-		AK_PROFILE_SCOPE("Renderer Prep");
+		// // AK_PROFILE_SCOPE("Renderer Prep");
 		Arklumos::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		Arklumos::RenderCommand::Clear();
 	}
 
 	{
-		AK_PROFILE_SCOPE("Renderer Draw");
+		// // AK_PROFILE_SCOPE("Renderer Draw");
 		Arklumos::Renderer2D::BeginScene(m_CameraController.GetCamera());
 		Arklumos::Renderer2D::DrawQuad({-1.0f, 0.0f}, {0.8f, 0.8f}, {0.8f, 0.2f, 0.3f, 1.0f});
 		Arklumos::Renderer2D::DrawQuad({0.5f, -0.5f}, {0.5f, 0.75f}, {0.2f, 0.3f, 0.8f, 1.0f});
@@ -47,11 +47,10 @@ void Testbox2D::OnUpdate(Arklumos::Timestep ts)
 
 void Testbox2D::OnImGuiRender()
 {
-	AK_PROFILE_FUNCTION();
+	// AK_PROFILE_FUNCTION();
 
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-
 	ImGui::End();
 }
 

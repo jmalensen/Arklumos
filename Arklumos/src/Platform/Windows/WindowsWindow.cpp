@@ -24,21 +24,21 @@ namespace Arklumos
 
 	WindowsWindow::WindowsWindow(const WindowProps &props)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		Shutdown();
 	}
 
 	void WindowsWindow::Init(const WindowProps &props)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
@@ -48,7 +48,7 @@ namespace Arklumos
 
 		if (s_GLFWWindowCount == 0)
 		{
-			AK_PROFILE_SCOPE("Initializing GLFW");
+			// AK_PROFILE_SCOPE("Initializing GLFW");
 			int success = glfwInit();
 			AK_CORE_ASSERT(success, "Could not intialize GLFW!");
 
@@ -61,7 +61,7 @@ namespace Arklumos
 			The vertical sync is enabled by calling the SetVSync function.
 		*/
 		{
-			AK_PROFILE_SCOPE("glfwCreateWindow");
+			// AK_PROFILE_SCOPE("glfwCreateWindow");
 #if defined(AK_DEBUG)
 			if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
 				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -180,7 +180,7 @@ namespace Arklumos
 
 	void WindowsWindow::Shutdown()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		glfwDestroyWindow(m_p_Window);
 		--s_GLFWWindowCount;
@@ -194,7 +194,7 @@ namespace Arklumos
 
 	void WindowsWindow::OnUpdate()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		glfwPollEvents();
 		m_p_Context->SwapBuffers();
@@ -202,7 +202,7 @@ namespace Arklumos
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		if (enabled)
 		{

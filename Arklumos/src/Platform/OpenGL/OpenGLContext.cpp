@@ -16,7 +16,7 @@ namespace Arklumos
 
 	void OpenGLContext::Init()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -39,7 +39,7 @@ namespace Arklumos
 
 	void OpenGLContext::SwapBuffers()
 	{
-		AK_PROFILE_FUNCTION();
+		// AK_PROFILE_FUNCTION();
 
 		glfwSwapBuffers(m_WindowHandle);
 	}

@@ -2,6 +2,7 @@
 #include "Arklumos/Core/Log.h"
 
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 namespace Arklumos
 {
@@ -12,24 +13,22 @@ namespace Arklumos
 
 	void Log::Init()
 	{
-		/*
-			The spdlog::set_pattern() function is called to set the log message pattern to "%^[%T] %n: %v%$", which is a custom pattern that includes the timestamp (%T), logger name (%n), and log message (%v).
-			The %^ and %$ characters are used to set the color of the log message to green.
-		*/
-		spdlog::set_pattern("%^[%T] %n: %v%$");
+		std::vector<spdlog::sink_ptr> logSinks;
+		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+		logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("Arklumos.log", true));
 
-		/*
-			Two logger objects are then created using the spdlog::stdout_color_mt() function, which creates a logger that writes log messages to the console with colored output.
-			The first logger is named "ARKLUMOS" and is assigned to s_CoreLogger, while the second logger is named "APP" and is assigned to s_ClientLogger.
+		logSinks[0]->set_pattern("%^[%T] %n: %v%$");
+		logSinks[1]->set_pattern("[%T] [%l] %n: %v");
 
-			Finally, the set_level() function is called on both logger objects to set the logging level to spdlog::level::trace, which means that all log messages with a severity level of trace or higher will be logged.
-			This is the lowest severity level and includes all log messages.
-		*/
-		s_CoreLogger = spdlog::stdout_color_mt("ARKLUMOS");
+		s_CoreLogger = std::make_shared<spdlog::logger>("ARKLUMOS", begin(logSinks), end(logSinks));
+		spdlog::register_logger(s_CoreLogger);
 		s_CoreLogger->set_level(spdlog::level::trace);
+		s_CoreLogger->flush_on(spdlog::level::trace);
 
-		s_ClientLogger = spdlog::stdout_color_mt("APP");
+		s_ClientLogger = std::make_shared<spdlog::logger>("APP", begin(logSinks), end(logSinks));
+		spdlog::register_logger(s_ClientLogger);
 		s_ClientLogger->set_level(spdlog::level::trace);
+		s_ClientLogger->flush_on(spdlog::level::trace);
 	}
 
 }

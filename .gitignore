@@ -47,6 +47,9 @@ Makefile
 Arklumos/vendor/imgui/cmake_install.cmake
 Arklumos/vendor/imgui/CMakeLists.txt
 
+#Logs files
+*.log
+
 ArklumosProfile-Runtime.json
 ArklumosProfile-Startup.json
 ArklumosProfile-Shutdown.json

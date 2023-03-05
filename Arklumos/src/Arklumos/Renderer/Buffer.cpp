@@ -8,6 +8,22 @@
 namespace Arklumos
 {
 
+	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:
+			AK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+			return nullptr;
+
+		case RendererAPI::API::OpenGL:
+			return CreateRef<OpenGLVertexBuffer>(size);
+		}
+
+		AK_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
+
 	/*
 		Implements a static method for creating vertex buffers.
 		A vertex buffer is a region of memory used to store vertex data, which is used by the graphics processing unit (GPU) to render objects on the screen.

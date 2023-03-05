@@ -52,7 +52,7 @@ namespace Arklumos
 			// AK_PROFILE_SCOPE("Initializing GLFW");
 
 			int success = glfwInit();
-			AK_CORE_ASSERT(success, "Could not intialize GLFW!");
+			AK_CORE_ASSERT(success, "Could not initialize GLFW!");
 
 			glfwSetErrorCallback(GLFWErrorCallback);
 		}

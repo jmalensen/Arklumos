@@ -10,7 +10,7 @@ namespace Arklumos
 	class KeyEvent : public Event
 	{
 	public:
-		inline KeyCode GetKeyCode() const { return m_KeyCode; }
+		KeyCode GetKeyCode() const { return m_KeyCode; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 
@@ -28,7 +28,7 @@ namespace Arklumos
 		KeyPressedEvent(KeyCode keycode, int repeatCount)
 				: KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
-		inline int GetRepeatCount() const
+		int GetRepeatCount() const
 		{
 			return m_RepeatCount;
 		}

@@ -8,7 +8,7 @@ workspace "Arklumos"
 		"Release",
 		"Dist"
 	}
-
+	
 	flags
 	{
 		"MultiProcessorCompile"
@@ -35,7 +35,8 @@ project "Arklumos"
 	location "Arklumos"
 	kind "StaticLib"
 	language "C++"
-	staticruntime "off"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -55,7 +56,8 @@ project "Arklumos"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
 	}
 
 	includedirs
@@ -63,7 +65,7 @@ project "Arklumos"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.glad}",
+		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}"
@@ -72,24 +74,16 @@ project "Arklumos"
 	links 
 	{ 
 		"GLFW",
-		"glad",
+		"Glad",
 		"ImGui",
 		"opengl32.lib"
 	}
 
 	filter "system:windows"
-		cppdialect "C++20"
 		systemversion "latest"
 
 		defines
 		{
-			"AK_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
-		}
-
-		postbuildcommands
-		{
-			("{COPYFILE} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Testbox/\"")
 		}
 
 	filter "configurations:Debug"
@@ -111,7 +105,7 @@ project "Testbox"
 	location "Testbox"
 	kind "ConsoleApp"
 	language "C++"
-	cppdialect "C++20"
+	cppdialect "C++17"
 	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -127,6 +121,7 @@ project "Testbox"
 	{
 		"Arklumos/vendor/spdlog/include",
 		"Arklumos/src",
+		"Arklumos/vendor",
 		"%{IncludeDir.glm}"
 	}
 
@@ -136,9 +131,8 @@ project "Testbox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++20"
 		systemversion "latest"
-
+		
 	filter "configurations:Debug"
 		defines "AK_DEBUG"
 		runtime "Debug"

@@ -94,7 +94,17 @@
 ///
 
 #ifdef AK_DEBUG
+#if defined(AK_PLATFORM_WINDOWS)
+#define AK_DEBUGBREAK() __debugbreak()
+#elif defined(AK_PLATFORM_LINUX)
+#include <signal.h>
+#define AK_DEBUGBREAK() raise(SIGTRAP)
+#else
+#error "Platform doesn't support debugbreak yet!"
+#endif
 #define AK_ENABLE_ASSERTS
+#else
+#define AK_DEBUGBREAK()
 #endif
 
 #ifdef AK_ENABLE_ASSERTS
@@ -103,6 +113,7 @@
 		if (!(x))                                         \
 		{                                                 \
 			AK_ERROR("Assertion Failed: {0}", __VA_ARGS__); \
+			AK_DEBUGBREAK();                                \
 		}                                                 \
 	}
 #define AK_CORE_ASSERT(x, ...)                             \
@@ -110,6 +121,7 @@
 		if (!(x))                                              \
 		{                                                      \
 			AK_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); \
+			AK_DEBUGBREAK();                                     \
 		}                                                      \
 	}
 #else

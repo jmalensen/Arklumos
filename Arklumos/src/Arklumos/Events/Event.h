@@ -66,6 +66,8 @@ namespace Arklumos
 	{
 
 	public:
+		virtual ~Event() = default;
+
 		bool Handled = false;
 
 		// When it's virtual, require implementation later ;)

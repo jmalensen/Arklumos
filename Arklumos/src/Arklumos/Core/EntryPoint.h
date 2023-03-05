@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 	app->Run();
 	// AK_PROFILE_END_SESSION();
 
-	// AK_PROFILE_BEGIN_SESSION("Startup", "ArklumosProfile-Shutdown.json");
+	// AK_PROFILE_BEGIN_SESSION("Shutdown", "ArklumosProfile-Shutdown.json");
 	delete app;
 	// AK_PROFILE_END_SESSION();
 }
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 	app->Run();
 	// AK_PROFILE_END_SESSION();
 
-	// AK_PROFILE_BEGIN_SESSION("Startup", "ArklumosProfile-Shutdown.json");
+	// AK_PROFILE_BEGIN_SESSION("Shutdown", "ArklumosProfile-Shutdown.json");
 	delete app;
 	// AK_PROFILE_END_SESSION();
 }

@@ -127,18 +127,14 @@ endif()
 
 ## TESTBOX PART
 # Find the files for the Testbox part
-# (should I target each file one by one ?)
-# file(GLOB_RECURSE TESTBOX_SRC_FILES
-#   "${CMAKE_SOURCE_DIR}/Testbox/src/*.cpp"
-#   "${CMAKE_SOURCE_DIR}/Testbox/src/*.h"
-# )
+file(GLOB_RECURSE TESTBOX_SRC_FILES
+  "${CMAKE_SOURCE_DIR}/Testbox/src/*.cpp"
+  "${CMAKE_SOURCE_DIR}/Testbox/src/*.h"
+)
 
 # Add the Testbox executable
-# (right now, it's easy because there is only file)
 add_executable(Testbox
-		TestBox/src/Testbox.cpp
-		TestBox/src/Testbox2D.cpp
-		TestBox/src/ExampleLayer.cpp)
+		${TESTBOX_SRC_FILES})
 
 # Link the Testbox executable with the Arklumos library
 target_link_libraries(Testbox PRIVATE ${PROJECT_NAME} imgui)
@@ -154,8 +150,24 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	#target_compile_definitions(Testbox PRIVATE AK_PLATFORM_LINUX)
 endif()
 
+
+## ARKLUSIS PART
+# Find the files for the Testbox part
+file(GLOB_RECURSE ARKLUSIS_SRC_FILES
+  "${CMAKE_SOURCE_DIR}/Arklusis/src/*.cpp"
+  "${CMAKE_SOURCE_DIR}/Arklusis/src/*.h"
+)
+
+# Add the Testbox executable
+add_executable(Arklusis
+		${ARKLUSIS_SRC_FILES})
+
+# Link the Arklusis executable with the Arklumos library
+target_link_libraries(Arklusis PRIVATE ${PROJECT_NAME})
+
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET Testbox PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET Arklusis PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 set_target_properties(${PROJECT_NAME} Testbox
     PROPERTIES

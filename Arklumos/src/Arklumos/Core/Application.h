@@ -18,7 +18,7 @@ namespace Arklumos
 	class Application
 	{
 	public:
-		Application();
+		Application(const std::string &name = "Arklumos App");
 		virtual ~Application();
 
 		void OnEvent(Event &e);

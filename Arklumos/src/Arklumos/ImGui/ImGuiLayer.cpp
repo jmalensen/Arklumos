@@ -100,6 +100,13 @@ namespace Arklumos
 		ImGui::DestroyContext();
 	}
 
+	void ImGuiLayer::OnEvent(Event &e)
+	{
+		ImGuiIO &io = ImGui::GetIO();
+		e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+		e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+	}
+
 	/*
 		Begin is a method of the ImGuiLayer class. This method is called at the beginning of each frame to initialize the ImGui interface.
 

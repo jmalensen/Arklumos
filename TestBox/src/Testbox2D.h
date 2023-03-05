@@ -21,6 +21,7 @@ private:
 	// Temp
 	Arklumos::Ref<Arklumos::VertexArray> m_SquareVA;
 	Arklumos::Ref<Arklumos::Shader> m_FlatColorShader;
+	Arklumos::Ref<Arklumos::Framebuffer> m_Framebuffer;
 
 	Arklumos::Ref<Arklumos::Texture2D> m_CheckerboardTexture;
 

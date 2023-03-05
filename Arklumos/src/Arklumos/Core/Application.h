@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arklumos/Core/Core.h"
+#include "Arklumos/Core/Base.h"
 #include "Arklumos/Core/Window.h"
 #include "Arklumos/Core/LayerStack.h"
 #include "Arklumos/Events/Event.h"
@@ -27,6 +27,8 @@ namespace Arklumos
 		void PushOverlay(Layer *layer);
 
 		Window &GetWindow() { return *m_Window; }
+
+		void Close();
 
 		static Application &Get() { return *s_Instance; }
 

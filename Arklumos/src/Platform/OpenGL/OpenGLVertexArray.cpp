@@ -79,26 +79,49 @@ namespace Arklumos
 		const auto &layout = vertexBuffer->GetLayout();
 		for (const auto &element : layout)
 		{
-			// This line enables the vertex attribute at the current index.
-			glEnableVertexAttribArray(m_VertexBufferIndex);
-
-			/*
-				Specifies how OpenGL should interpret the data at the current vertex attribute. It takes six arguments:
-
-					m_VertexBufferIndex: The index of the current vertex attribute.
-					element.GetComponentCount(): The number of components in the current element.
-					ShaderDataTypeToOpenGLBaseType(element.Type): The data type of the current element, translated from the custom shader data type to the corresponding OpenGL base type.
-					element.Normalized ? GL_TRUE : GL_FALSE: Whether the data should be normalized.
-					layout.GetStride(): The distance in bytes between consecutive vertices.
-					(const void *)(uintptr_t)element.Offset: A pointer to the offset of the current element within the vertex data. The uintptr_t cast is used to convert the offset to a pointer-sized integer, which can be used as a void pointer.
-			*/
-			glVertexAttribPointer(m_VertexBufferIndex,
-														element.GetComponentCount(),
-														ShaderDataTypeToOpenGLBaseType(element.Type),
-														element.Normalized ? GL_TRUE : GL_FALSE,
-														layout.GetStride(),
-														(const void *)(uintptr_t)element.Offset);
-			m_VertexBufferIndex++;
+			switch (element.Type)
+			{
+			case ShaderDataType::Float:
+			case ShaderDataType::Float2:
+			case ShaderDataType::Float3:
+			case ShaderDataType::Float4:
+			case ShaderDataType::Int:
+			case ShaderDataType::Int2:
+			case ShaderDataType::Int3:
+			case ShaderDataType::Int4:
+			case ShaderDataType::Bool:
+			{
+				glEnableVertexAttribArray(m_VertexBufferIndex);
+				glVertexAttribPointer(m_VertexBufferIndex,
+															element.GetComponentCount(),
+															ShaderDataTypeToOpenGLBaseType(element.Type),
+															element.Normalized ? GL_TRUE : GL_FALSE,
+															layout.GetStride(),
+															(const void *)element.Offset);
+				m_VertexBufferIndex++;
+				break;
+			}
+			case ShaderDataType::Mat3:
+			case ShaderDataType::Mat4:
+			{
+				uint8_t count = element.GetComponentCount();
+				for (uint8_t i = 0; i < count; i++)
+				{
+					glEnableVertexAttribArray(m_VertexBufferIndex);
+					glVertexAttribPointer(m_VertexBufferIndex,
+																count,
+																ShaderDataTypeToOpenGLBaseType(element.Type),
+																element.Normalized ? GL_TRUE : GL_FALSE,
+																layout.GetStride(),
+																(const void *)(sizeof(float) * count * i));
+					glVertexAttribDivisor(m_VertexBufferIndex, 1);
+					m_VertexBufferIndex++;
+				}
+				break;
+			}
+			default:
+				AK_CORE_ASSERT(false, "Unknown ShaderDataType!");
+			}
 		}
 
 		m_VertexBuffers.push_back(vertexBuffer);

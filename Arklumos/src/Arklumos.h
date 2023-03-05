@@ -2,7 +2,7 @@
 
 // For use by Arklumos applications
 
-#include "Arklumos/Core/Core.h"
+#include "Arklumos/Core/Base.h"
 
 #include "Arklumos/Core/Application.h"
 #include "Arklumos/Core/Layer.h"
@@ -25,6 +25,7 @@
 
 #include "Arklumos/Renderer/Buffer.h"
 #include "Arklumos/Renderer/Shader.h"
+#include "Arklumos/Renderer/Framebuffer.h"
 #include "Arklumos/Renderer/Texture.h"
 #include "Arklumos/Renderer/VertexArray.h"
 

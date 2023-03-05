@@ -61,6 +61,11 @@ namespace Arklumos
 		layer->OnAttach();
 	}
 
+	void Application::Close()
+	{
+		m_Running = false;
+	}
+
 	void Application::OnEvent(Event &e)
 	{
 		// AK_PROFILE_FUNCTION();
@@ -80,11 +85,11 @@ namespace Arklumos
 		*/
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
-			(*it)->OnEvent(e);
 			if (e.Handled)
 			{
 				break;
 			}
+			(*it)->OnEvent(e);
 		}
 	}
 

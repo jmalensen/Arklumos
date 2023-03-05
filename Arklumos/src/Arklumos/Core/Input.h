@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arklumos/Core/Core.h"
+#include "Arklumos/Core/Base.h"
 #include "Arklumos/Core/KeyCodes.h"
 #include "Arklumos/Core/MouseCodes.h"
 

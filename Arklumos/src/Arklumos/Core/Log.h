@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arklumos/Core/Core.h"
+#include "Arklumos/Core/Base.h"
 
 // This ignores all warnings raised inside External headers
 #pragma warning(push, 0)

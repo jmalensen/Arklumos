@@ -2,7 +2,7 @@
 
 #include "akpch.h"
 
-#include "Arklumos/Core/Core.h"
+#include "Arklumos/Core/Base.h"
 #include "Arklumos/Events/Event.h"
 
 namespace Arklumos

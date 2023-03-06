@@ -61,14 +61,45 @@ namespace Arklumos
 
 	void Scene::OnUpdate(Timestep ts)
 	{
+		// Update scripts
+		{
+			/*
+				warning: implicit capture of 'this' via '[=]' is deprecated in C++20 [-Wdeprecated]
+				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto &nsc)
+
+				The warning message you are seeing is indicating that the lambda function is capturing this implicitly through the use of the capture-all [=] capture clause.
+				This means that the lambda function is capturing all variables by value, including this, which can lead to issues if the lifetime of the lambda outlasts the lifetime of the object that this refers to.
+
+				To fix this warning, you can explicitly capture only the variables that are needed by the lambda function. In this case, you can capture nsc by reference using the capture clause &, like this: [&] in place of [=]
+				This way, nsc will be captured by reference, but this will not be captured implicitly.
+			*/
+			m_Registry.view<NativeScriptComponent>().each([&](auto entity, auto &nsc)
+																										{
+																											if (!nsc.Instance)
+																											{
+																												nsc.InstantiateFunction();
+																												nsc.Instance->m_Entity = Entity{entity, this};
+
+																												if (nsc.OnCreateFunction)
+																												{
+																													nsc.OnCreateFunction(nsc.Instance);
+																												}
+																											}
+
+																											if (nsc.OnUpdateFunction)
+																											{
+																												nsc.OnUpdateFunction(nsc.Instance, ts);
+																											} });
+		}
+
 		// Render 2D
 		Camera *mainCamera = nullptr;
 		glm::mat4 *cameraTransform = nullptr;
 		{
-			auto group = m_Registry.view<TransformComponent, CameraComponent>();
-			for (auto entity : group)
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view)
 			{
-				const auto &[transform, camera] = group.get<TransformComponent, CameraComponent>(entity);
+				const auto &[transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
 				if (camera.Primary)
 				{
@@ -99,6 +130,23 @@ namespace Arklumos
 			}
 
 			Renderer2D::EndScene();
+		}
+	}
+
+	void Scene::OnViewportResize(uint32_t width, uint32_t height)
+	{
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
+
+		// Resize our non-FixedAspectRatio cameras
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto &cameraComponent = view.get<CameraComponent>(entity);
+			if (!cameraComponent.FixedAspectRatio)
+			{
+				cameraComponent.Camera.SetViewportSize(width, height);
+			}
 		}
 	}
 

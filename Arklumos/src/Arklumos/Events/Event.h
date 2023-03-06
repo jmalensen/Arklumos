@@ -1,6 +1,8 @@
 #pragma once
 
-#include "akpch.h"
+#include <functional>
+
+#include "Arklumos/Debug/Instrumentor.h"
 #include "Arklumos/Core/Base.h"
 
 namespace Arklumos

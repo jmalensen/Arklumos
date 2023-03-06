@@ -64,6 +64,7 @@ namespace Arklumos
 		// AK_PROFILE_FUNCTION();
 
 		std::string result;
+		// Warning: ifstream closes itself due to RAII
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 		if (in)
 		{
@@ -74,7 +75,6 @@ namespace Arklumos
 				result.resize(size);
 				in.seekg(0, std::ios::beg);
 				in.read(&result[0], size);
-				in.close();
 			}
 			else
 			{

@@ -15,7 +15,7 @@ namespace Arklumos
 		The function checks if the state returned by glfwGetKey is either GLFW_PRESS or GLFW_REPEAT, which indicates that the key is currently being pressed.
 		Finally, the function returns a boolean value indicating whether the key is currently pressed or not.
 	*/
-	bool Input::IsKeyPressed(KeyCode key)
+	bool Input::IsKeyPressed(const KeyCode key)
 	{
 		auto window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
 		auto state = glfwGetKey(window, static_cast<int32_t>(key));
@@ -30,9 +30,9 @@ namespace Arklumos
 		The function then calls glfwGetMouseButton function, passing in the GLFW window object and the button parameter. This function returns the current state of the specified mouse button (GLFW_PRESS or GLFW_RELEASE).
 		Finally, the function checks if the returned state is GLFW_PRESS (button is currently pressed) and returns true, otherwise it returns false.
 	*/
-	bool Input::IsMouseButtonPressed(MouseCode button)
+	bool Input::IsMouseButtonPressed(const MouseCode button)
 	{
-		auto window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
+		auto *window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
 		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 		return state == GLFW_PRESS;
 	}
@@ -43,9 +43,9 @@ namespace Arklumos
 		The method starts by retrieving a pointer to the GLFW window associated with the application's window using Application::Get().GetWindow().GetNativeWindow(). Then, it calls the glfwGetCursorPos function, which retrieves the current position of the mouse cursor relative to the top-left corner of the window in screen coordinates. The function returns the position of the cursor as two double values, which are stored in the xpos and ypos variables.
 		Finally, the method returns a std::pair object with the xpos and ypos values cast to float.
 	*/
-	std::pair<float, float> Input::GetMousePosition()
+	glm::vec2 Input::GetMousePosition()
 	{
-		auto window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
+		auto *window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
 
@@ -54,14 +54,12 @@ namespace Arklumos
 
 	float Input::GetMouseX()
 	{
-		auto [x, y] = GetMousePosition();
-		return x;
+		return GetMousePosition().x;
 	}
 
 	float Input::GetMouseY()
 	{
-		auto [x, y] = GetMousePosition();
-		return y;
+		return GetMousePosition().y;
 	}
 
 }

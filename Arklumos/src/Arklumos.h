@@ -20,6 +20,7 @@
 
 #include "Arklumos/Scene/Scene.h"
 #include "Arklumos/Scene/Entity.h"
+#include "Arklumos/Scene/ScriptableEntity.h"
 #include "Arklumos/Scene/Components.h"
 
 // ---Renderer------------------------

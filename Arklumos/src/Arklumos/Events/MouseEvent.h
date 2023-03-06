@@ -5,7 +5,7 @@
 
 namespace Arklumos
 {
-
+	// MouseMovedEvent
 	class MouseMovedEvent : public Event
 	{
 	public:
@@ -15,6 +15,7 @@ namespace Arklumos
 		float GetX() const { return m_MouseX; }
 		float GetY() const { return m_MouseY; }
 
+		// For debugging purpose
 		std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -24,10 +25,12 @@ namespace Arklumos
 
 		EVENT_CLASS_TYPE(MouseMoved)
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+
 	private:
 		float m_MouseX, m_MouseY;
 	};
 
+	// MouseScrolledEvent
 	class MouseScrolledEvent : public Event
 	{
 	public:
@@ -37,6 +40,7 @@ namespace Arklumos
 		float GetXOffset() const { return m_XOffset; }
 		float GetYOffset() const { return m_YOffset; }
 
+		// For debugging purpose
 		std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -46,16 +50,19 @@ namespace Arklumos
 
 		EVENT_CLASS_TYPE(MouseScrolled)
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+
 	private:
 		float m_XOffset, m_YOffset;
 	};
 
+	// MouseButtonEvent
 	class MouseButtonEvent : public Event
 	{
 	public:
 		inline MouseCode GetMouseButton() const { return m_Button; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+
 	protected:
 		MouseButtonEvent(MouseCode button)
 				: m_Button(button) {}
@@ -63,12 +70,14 @@ namespace Arklumos
 		MouseCode m_Button;
 	};
 
+	// MouseButtonPressedEvent
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(MouseCode button)
 				: MouseButtonEvent(button) {}
 
+		// For debugging purpose
 		std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -79,12 +88,14 @@ namespace Arklumos
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
+	// MouseButtonReleasedEvent
 	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(MouseCode button)
 				: MouseButtonEvent(button) {}
 
+		// For debugging purpose
 		std::string ToString() const override
 		{
 			std::stringstream ss;

@@ -8,6 +8,16 @@
 namespace Arklumos
 {
 
+	/*
+		Implements a static function named Create that takes a uint32_t parameter named size and returns a Ref<VertexBuffer> object.
+
+		This switch statement checks which graphics API is currently being used by the renderer.
+		If the API is set to RendererAPI::API::None, the function will assert and return nullptr.
+		If the API is set to RendererAPI::API::OpenGL, it will create a new OpenGLVertexBuffer object using the CreateRef function and return it.
+
+		If the API is not set to either RendererAPI::API::None or RendererAPI::API::OpenGL, the function will assert and return nullptr.
+		This ensures that the Create function is only called with a supported API.
+	*/
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
 	{
 		switch (Renderer::GetAPI())

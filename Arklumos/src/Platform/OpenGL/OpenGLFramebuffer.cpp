@@ -14,7 +14,9 @@ namespace Arklumos
 
 	OpenGLFramebuffer::~OpenGLFramebuffer()
 	{
+		// Deletes a single framebuffer object, identified by the m_RendererID member variable of the OpenGLFramebuffer object. A framebuffer object is an OpenGL object that contains a set of buffers for storing color, depth, and stencil information used for rendering.
 		glDeleteFramebuffers(1, &m_RendererID);
+		// Delete the two texture objects used for color and depth attachments, identified by the m_ColorAttachment and m_DepthAttachment member variables, respectively. Texture objects are used to store and manipulate texture images in OpenGL, and they can be used as attachments to a framebuffer object for rendering
 		glDeleteTextures(1, &m_ColorAttachment);
 		glDeleteTextures(1, &m_DepthAttachment);
 	}

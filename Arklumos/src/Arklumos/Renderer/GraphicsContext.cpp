@@ -7,6 +7,14 @@
 namespace Arklumos
 {
 
+	/*
+		Create a graphics context for a specific rendering API (in this case, OpenGL).
+
+		The function first calls Renderer::GetAPI() to determine which rendering API is being used.
+		If the API is None, it will return nullptr and assert an error.
+		If the API is OpenGL, it will return a Scope smart pointer to an OpenGLContext object, passing the window pointer to its constructor.
+		If the API is unknown, it will return nullptr and assert an error.
+	*/
 	Scope<GraphicsContext> GraphicsContext::Create(void *window)
 	{
 		switch (Renderer::GetAPI())

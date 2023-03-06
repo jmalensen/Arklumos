@@ -125,8 +125,10 @@ namespace Arklumos
 			m_OutputStream.flush();
 		}
 
-		// Note: you must already own lock on m_Mutex before
-		// calling InternalEndSession()
+		/*
+			Note: you must already own lock on m_Mutex before
+			calling InternalEndSession()
+		*/
 		void InternalEndSession()
 		{
 			if (m_CurrentSession)
@@ -147,9 +149,11 @@ namespace Arklumos
 	class InstrumentationTimer
 	{
 	public:
+		// Constructor with name and initialization list
 		InstrumentationTimer(const char *name)
 				: m_Name(name), m_Stopped(false)
 		{
+			// Initializes the m_StartTimepoint variable with the current time using the std::chrono::steady_clock::now() function. This starts the timer for the InstrumentationTimer instance
 			m_StartTimepoint = std::chrono::steady_clock::now();
 		}
 
@@ -161,8 +165,19 @@ namespace Arklumos
 
 		void Stop()
 		{
+			// Gets the current time
 			auto endTimepoint = std::chrono::steady_clock::now();
+
+			/*
+				Creates a new FloatingPointMicroseconds object named highResStart that is initialized with the number of microseconds since the epoch (January 1, 1970) represented by the m_StartTimepoint variable.
+				This will be used to record the start time of the timer
+			*/
 			auto highResStart = FloatingPointMicroseconds{m_StartTimepoint.time_since_epoch()};
+
+			/*
+				Calculates the elapsed time between the start and end timepoints of the timer in microseconds.
+				The time_since_epoch() function is used to get the duration since the epoch for each timepoint, and the time_point_cast() function is used to convert the timepoints to a duration in microseconds
+			*/
 			auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch();
 
 			Instrumentor::Get().WriteProfile({m_Name, highResStart, elapsedTime, std::this_thread::get_id()});
@@ -179,6 +194,19 @@ namespace Arklumos
 	namespace InstrumentorUtils
 	{
 
+		/*
+			Defines two templates that are used to remove specific characters or strings from a string literal at compile time.
+			The ChangeResult template is used to store the resulting string after removing a character or string.
+			The CleanupOutputString template takes two string literals as arguments, the expr string literal and the remove string literal, which contains the character or string that needs to be removed.
+
+			The template function then initializes an instance of the ChangeResult template, which has a character array of size N, where N is the length of the expr string literal.
+			The function then iterates through the expr string literal, and for each character, it compares it with the remove string literal.
+			If there is a match, the function continues iterating over expr without copying the matching character.
+			If there is no match, the function copies the character into the result variable. Additionally, if the character is a double quote, it is changed to a single quote.
+
+			In the end, return the result containing the cleaned up string.
+			This process occurs at compile time, which means the resulting string is available at runtime without any additional overhead.
+		*/
 		template <size_t N>
 		struct ChangeResult
 		{
@@ -196,9 +224,13 @@ namespace Arklumos
 			{
 				size_t matchIndex = 0;
 				while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1 && expr[srcIndex + matchIndex] == remove[matchIndex])
+				{
 					matchIndex++;
+				}
 				if (matchIndex == K - 1)
+				{
 					srcIndex += matchIndex;
+				}
 				result.Data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
 				srcIndex++;
 			}
@@ -209,9 +241,9 @@ namespace Arklumos
 
 #define AK_PROFILE 0
 #if AK_PROFILE
-// Resolve which function signature macro will be used. Note that this only
-// is resolved when the (pre)compiler starts, so the syntax highlighting
-// could mark the wrong one in your editor!
+// Resolve which function signature macro will be used.
+// Note that this only is resolved when the (pre)compiler starts,
+// so the syntax highlighting  could mark the wrong one in your editor!
 #if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) || (defined(__ICC) && (__ICC >= 600)) || defined(__ghs__)
 #define AK_FUNC_SIG __PRETTY_FUNCTION__
 #elif defined(__DMC__) && (__DMC__ >= 0x810)

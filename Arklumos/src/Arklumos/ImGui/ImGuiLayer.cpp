@@ -47,6 +47,7 @@ namespace Arklumos
 		// ImGui::StyleColorsClassic();
 
 		// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+
 		/*
 			Retrieves the current ImGui style using ImGui::GetStyle(), which is a reference to a ImGuiStyle struct.
 			Then, it checks if the ImGuiConfigFlags_ViewportsEnable configuration flag is set in the io ImGuiIO object.
@@ -100,6 +101,16 @@ namespace Arklumos
 		ImGui::DestroyContext();
 	}
 
+	/*
+		OnEvent handles events
+
+		The if statement checks if the m_BlockEvents flag is set, which can be used to prevent events from being handled by other layers in the layer stack.
+
+		If m_BlockEvents is set to true, the function checks if the event is a mouse or keyboard event (EventCategoryMouse and EventCategoryKeyboard are event categories defined in the Event.h header file).
+		If the event is a mouse or keyboard event, the function then checks if ImGui wants to capture the event by checking the WantCaptureMouse and WantCaptureKeyboard flags in the ImGuiIO struct.
+
+		Finally, the function sets the Handled flag on the event to true if ImGui wants to capture the event, preventing it from being handled by any other layers in the layer stack
+	*/
 	void ImGuiLayer::OnEvent(Event &e)
 	{
 		if (m_BlockEvents)

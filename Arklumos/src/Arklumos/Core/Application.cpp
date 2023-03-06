@@ -20,7 +20,13 @@ namespace Arklumos
 		AK_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
+		// Creates a new window passing in a WindowProps object with the specified name
 		m_Window = Window::Create(WindowProps(name));
+
+		/*
+			Sets the event callback function for the window using the SetEventCallback method of the Window class.
+			The callback function is specified using the AK_BIND_EVENT_FN macro, which takes a function pointer and binds it to a particular class instance (Application in this case). The actual callback function being used is OnEvent
+		*/
 		m_Window->SetEventCallback(AK_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();

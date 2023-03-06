@@ -16,12 +16,27 @@ namespace Arklumos
 	{
 		// AK_PROFILE_FUNCTION();
 
-		m_CheckerboardTexture = Arklumos::Texture2D::Create("assets/textures/Checkerboard.png");
+		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
-		Arklumos::FramebufferSpecification fbSpec;
+		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
-		m_Framebuffer = Arklumos::Framebuffer::Create(fbSpec);
+		m_Framebuffer = Framebuffer::Create(fbSpec);
+
+		m_ActiveScene = CreateRef<Scene>();
+
+		// Entity
+		auto square = m_ActiveScene->CreateEntity("Green Square");
+		square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
+
+		m_SquareEntity = square;
+
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+
+		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+		auto &cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+		cc.Primary = false;
 	}
 
 	void EditorLayer::OnDetach()
@@ -29,12 +44,12 @@ namespace Arklumos
 		// AK_PROFILE_FUNCTION();
 	}
 
-	void EditorLayer::OnUpdate(Arklumos::Timestep ts)
+	void EditorLayer::OnUpdate(Timestep ts)
 	{
 		// AK_PROFILE_FUNCTION();
 
 		// Resize
-		if (Arklumos::FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
 				m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
 				(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
@@ -49,39 +64,15 @@ namespace Arklumos
 		}
 
 		// Render
-		Arklumos::Renderer2D::ResetStats();
-		{
-			// AK_PROFILE_SCOPE("Renderer Prep");
-			m_Framebuffer->Bind();
-			Arklumos::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
-			Arklumos::RenderCommand::Clear();
-		}
+		Renderer2D::ResetStats();
+		m_Framebuffer->Bind();
+		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+		RenderCommand::Clear();
 
-		{
-			static float rotation = 0.0f;
-			rotation += ts * 50.0f;
+		// Update scene
+		m_ActiveScene->OnUpdate(ts);
 
-			// AK_PROFILE_SCOPE("Renderer Draw");
-			Arklumos::Renderer2D::BeginScene(m_CameraController.GetCamera());
-			Arklumos::Renderer2D::DrawRotatedQuad({1.0f, 0.0f}, {0.8f, 0.8f}, -45.0f, {0.8f, 0.2f, 0.3f, 1.0f});
-			Arklumos::Renderer2D::DrawQuad({-1.0f, 0.0f}, {0.8f, 0.8f}, {0.8f, 0.2f, 0.3f, 1.0f});
-			Arklumos::Renderer2D::DrawQuad({0.5f, -0.5f}, {0.5f, 0.75f}, m_SquareColor);
-			Arklumos::Renderer2D::DrawQuad({0.0f, 0.0f, -0.1f}, {20.0f, 20.0f}, m_CheckerboardTexture, 10.0f);
-			Arklumos::Renderer2D::DrawRotatedQuad({-2.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, rotation, m_CheckerboardTexture, 20.0f);
-			Arklumos::Renderer2D::EndScene();
-
-			Arklumos::Renderer2D::BeginScene(m_CameraController.GetCamera());
-			for (float y = -5.0f; y < 5.0f; y += 0.5f)
-			{
-				for (float x = -5.0f; x < 5.0f; x += 0.5f)
-				{
-					glm::vec4 color = {(x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f};
-					Arklumos::Renderer2D::DrawQuad({x, y}, {0.45f, 0.45f}, color);
-				}
-			}
-			Arklumos::Renderer2D::EndScene();
-			m_Framebuffer->Unbind();
-		}
+		m_Framebuffer->Unbind();
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -111,7 +102,9 @@ namespace Arklumos
 
 		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+		{
 			window_flags |= ImGuiWindowFlags_NoBackground;
+		}
 
 		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
 		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
@@ -123,7 +116,9 @@ namespace Arklumos
 		ImGui::PopStyleVar();
 
 		if (opt_fullscreen)
+		{
 			ImGui::PopStyleVar(2);
+		}
 
 		// DockSpace
 		ImGuiIO &io = ImGui::GetIO();
@@ -142,7 +137,9 @@ namespace Arklumos
 				// ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
 
 				if (ImGui::MenuItem("Exit"))
-					Arklumos::Application::Get().Close();
+				{
+					Application::Get().Close();
+				}
 				ImGui::EndMenu();
 			}
 
@@ -151,14 +148,32 @@ namespace Arklumos
 
 		ImGui::Begin("Settings");
 
-		auto stats = Arklumos::Renderer2D::GetStats();
+		auto stats = Renderer2D::GetStats();
 		ImGui::Text("Renderer2D Stats:");
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 		ImGui::Text("Quads: %d", stats.QuadCount);
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+		if (m_SquareEntity)
+		{
+			ImGui::Separator();
+			auto &tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+			ImGui::Text("%s", tag.c_str());
+
+			auto &squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+			ImGui::Separator();
+		}
+
+		ImGui::DragFloat3("Camera Transform",
+											glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+
+		if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
+		{
+			m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+			m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+		}
 
 		ImGui::End();
 
@@ -174,15 +189,14 @@ namespace Arklumos
 		m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
 
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-		// ImGui::Image((void *)textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1}, ImVec2{1, 0});
-		ImGui::Image(reinterpret_cast<void *>(static_cast<uintptr_t>(textureID)), ImVec2{1280, 720}, ImVec2{0, 1}, ImVec2{1, 0});
+		ImGui::Image(reinterpret_cast<void *>(static_cast<uintptr_t>(textureID)), ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1}, ImVec2{1, 0});
 		ImGui::End();
 		ImGui::PopStyleVar();
 
 		ImGui::End();
 	}
 
-	void EditorLayer::OnEvent(Arklumos::Event &e)
+	void EditorLayer::OnEvent(Event &e)
 	{
 		m_CameraController.OnEvent(e);
 	}

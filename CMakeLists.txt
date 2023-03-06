@@ -73,6 +73,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/glm)
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/stb_image)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/stb_image)
 
+include_directories(${CMAKE_SOURCE_DIR}/Arklumos/vendor/entt/include)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/entt)
+
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/src)
 
 # if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -99,10 +102,10 @@ add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
 # Link the Arklumos dll with the glfw, glad, imgui libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glfw)
-	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui glm stb_image)
+	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui glm stb_image entt)
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_link_libraries(${PROJECT_NAME} glad glfw imgui glm stb_image)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)
+	target_link_libraries(${PROJECT_NAME} glad glfw imgui glm stb_image entt)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)
 endif()
 
 
@@ -137,7 +140,7 @@ add_executable(Testbox
 		${TESTBOX_SRC_FILES})
 
 # Link the Testbox executable with the Arklumos library
-target_link_libraries(Testbox PRIVATE ${PROJECT_NAME} imgui)
+target_link_libraries(Testbox PRIVATE ${PROJECT_NAME} imgui glm entt)
 # target_link_directories(Testbox PRIVATE ${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
 
 # Define macros for the Testbox
@@ -163,7 +166,7 @@ add_executable(Arklusis
 		${ARKLUSIS_SRC_FILES})
 
 # Link the Arklusis executable with the Arklumos library
-target_link_libraries(Arklusis PRIVATE ${PROJECT_NAME})
+target_link_libraries(Arklusis PRIVATE ${PROJECT_NAME} glm entt)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET Testbox PROPERTY POSITION_INDEPENDENT_CODE ON)

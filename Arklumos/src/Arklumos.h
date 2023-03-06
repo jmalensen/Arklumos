@@ -18,6 +18,10 @@
 
 #include "Arklumos/ImGui/ImGuiLayer.h"
 
+#include "Arklumos/Scene/Scene.h"
+#include "Arklumos/Scene/Entity.h"
+#include "Arklumos/Scene/Components.h"
+
 // ---Renderer------------------------
 #include "Arklumos/Renderer/Renderer.h"
 #include "Arklumos/Renderer/Renderer2D.h"

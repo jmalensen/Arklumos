@@ -236,6 +236,21 @@ namespace Arklumos
 		s_Data.TextureSlotIndex = 1;
 	}
 
+	void Renderer2D::BeginScene(const Camera &camera, const glm::mat4 &transform)
+	{
+		// AK_PROFILE_FUNCTION();
+
+		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
+	}
+
 	/*
 		End a 2D rendering scene. It is responsible for finalizing the rendering state and flushing all the rendered data to the screen.
 
@@ -316,6 +331,29 @@ namespace Arklumos
 	{
 		// AK_PROFILE_FUNCTION();
 
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+
+		DrawQuad(transform, color);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, float tilingFactor, const glm::vec4 &tintColor)
+	{
+		DrawQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, tintColor);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, float tilingFactor, const glm::vec4 &tintColor)
+	{
+		// AK_PROFILE_FUNCTION();
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+
+		DrawQuad(transform, texture, tilingFactor);
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color)
+	{
+		// AK_PROFILE_FUNCTION();
+
 		/*
 			Prepare to draw a quad with a white texture.
 
@@ -334,18 +372,6 @@ namespace Arklumos
 		{
 			FlushAndReset();
 		}
-
-		/*
-			glm::translate(glm::mat4(1.0f), position) creates a 4x4 translation matrix that will translate a vector by the amount specified in the position argument.
-			The second argument glm::mat4(1.0f) specifies the identity matrix, which means that the translation will not be affected by any previous transformations.
-
-			glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f}) creates a 4x4 scale matrix that will scale a vector by the amount specified in the size argument.
-			The third argument 1.0f means that the scaling should not affect the z-axis. Again, the second argument specifies the identity matrix.
-
-			The resulting transformation matrix will first translate a point by the position vector and then scale it by the size vector.
-			The resulting matrix can be used to transform a vertex position from local space to world space.
-		*/
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
 		/*
 			Create a quad and add its vertices to the vertex buffer. The quad is transformed by a given position and size using a 4x4 transformation matrix, which is created using the glm::translate and glm::scale functions.
@@ -371,12 +397,7 @@ namespace Arklumos
 		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, float tilingFactor, const glm::vec4 &tintColor)
-	{
-		DrawQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, tintColor);
-	}
-
-	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, float tilingFactor, const glm::vec4 &tintColor)
+	void Renderer2D::DrawQuad(const glm::mat4 &transform, const Ref<Texture2D> &texture, float tilingFactor, const glm::vec4 &tintColor)
 	{
 		// AK_PROFILE_FUNCTION();
 
@@ -438,18 +459,6 @@ namespace Arklumos
 			s_Data.TextureSlotIndex++;
 		}
 
-		/*
-			glm::translate(glm::mat4(1.0f), position) creates a 4x4 translation matrix that will translate a vector by the amount specified in the position argument.
-			The second argument glm::mat4(1.0f) specifies the identity matrix, which means that the translation will not be affected by any previous transformations.
-
-			glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f}) creates a 4x4 scale matrix that will scale a vector by the amount specified in the size argument.
-			The third argument 1.0f means that the scaling should not affect the z-axis. Again, the second argument specifies the identity matrix.
-
-			The resulting transformation matrix will first translate a point by the position vector and then scale it by the size vector.
-			The resulting matrix can be used to transform a vertex position from local space to world space.
-		*/
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
-
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
 			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
@@ -475,34 +484,6 @@ namespace Arklumos
 		// AK_PROFILE_FUNCTION();
 
 		/*
-			Defines some constants and checks whether the current number of indices in the quad index buffer (s_Data.QuadIndexCount) is equal to or greater than the maximum allowed indices (Renderer2DData::MaxIndices).
-			If this is the case, it flushes and resets the renderer state, effectively rendering all previously buffered quads to the screen.
-
-			The constants defined in this code are:
-
-					quadVertexCount: The number of vertices in a quad. This is always 4.
-					textureIndex: The index of the texture to use for the quad. This is set to 0.0f, which corresponds to a default white texture.
-					textureCoords: An array of texture coordinates for the quad vertices. These are defined as 2D vectors in the range [0,1], where (0,0) is the bottom-left corner of the texture and (1,1) is the top-right corner.
-					tilingFactor: The tiling factor to apply to the texture. This is set to 1.0f, indicating that the texture should not be tiled.
-		*/
-		constexpr size_t quadVertexCount = 4;
-		const float textureIndex = 0.0f; // White Texture
-		constexpr glm::vec2 textureCoords[] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
-		const float tilingFactor = 1.0f;
-
-		/*
-			Checks if the current number of indices in the quad index buffer (s_Data.QuadIndexCount) has exceeded the maximum number of indices allowed (Renderer2DData::MaxIndices).
-			If this is the case, the function FlushAndReset() is called to render the current batch of quads and reset the vertex and index buffers to prepare for the next batch.
-
-			This check is necessary to ensure that the renderer does not try to render more quads than the hardware can handle, which could lead to performance issues or crashes.
-			By flushing the current batch and resetting the buffers when the limit is reached, the renderer ensures that it can render a large number of quads without running into issues
-		*/
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-		{
-			FlushAndReset();
-		}
-
-		/*
 			Creates a 4x4 transformation matrix transform that combines a translation, rotation, and scaling. Here's what each part of the matrix does:
 
 			glm::translate(glm::mat4(1.0f), position): This creates a translation matrix that will move an object to the position specified. The glm::mat4(1.0f) creates a 4x4 identity matrix that will be multiplied by the translation matrix.
@@ -515,32 +496,7 @@ namespace Arklumos
 		*/
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-		/*
-			Iterates over each vertex of the quad (which has four vertices) and updates the attributes of the corresponding vertex in the vertex buffer. Here is a breakdown of what happens in each iteration:
-
-					s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i]; updates the position of the vertex in the vertex buffer by multiplying the vertex position (stored in s_Data.QuadVertexPositions) by the transformation matrix transform.
-					This applies the transformation to the vertex position and places it in the correct location in the world.
-
-					s_Data.QuadVertexBufferPtr->Color = color; sets the color attribute of the vertex to the color passed as an argument to the function.
-					s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i]; sets the texture coordinate attribute of the vertex to the corresponding value in the textureCoords array.
-					s_Data.QuadVertexBufferPtr->TexIndex = textureIndex; sets the texture index attribute of the vertex to the texture index obtained earlier in the function.
-					s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor; sets the tiling factor attribute of the vertex to the value passed as an argument to the function.
-
-			After updating the attributes of all four vertices, the function increments the index count of the vertex buffer by 6 (which is the number of indices required to draw a quad) and increments the quad count in the statistics data structure.
-		*/
-		for (size_t i = 0; i < quadVertexCount; i++)
-		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr++;
-		}
-
-		s_Data.QuadIndexCount += 6;
-
-		s_Data.Stats.QuadCount++;
+		DrawQuad(transform, color);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, float rotation, const Ref<Texture2D> &texture, float tilingFactor, const glm::vec4 &tintColor)
@@ -551,55 +507,6 @@ namespace Arklumos
 	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, float rotation, const Ref<Texture2D> &texture, float tilingFactor, const glm::vec4 &tintColor)
 	{
 		// AK_PROFILE_FUNCTION();
-
-		/*
-			Defines a constant quadVertexCount with a value of 4, indicating that each quad has 4 vertices, and a constant array of textureCoords with four elements, each specifying the texture coordinates for each vertex of the quad.
-
-			Then, the code checks if the current number of indices in the s_Data struct is greater than or equal to the maximum number of indices allowed, specified by Renderer2DData::MaxIndices.
-			If so, the FlushAndReset() function is called to reset the data and draw the current batch of quads.
-
-			After that, the code checks if the current texture is already in the texture slot array, which is stored in s_Data. It does this by looping through the texture slots array, starting from index 1.
-			It skips index 0, which is reserved for the default white texture.
-
-			If the texture is found in the array, the index of the texture slot it is stored in is assigned to textureIndex.
-			Otherwise, textureIndex remains at its initial value of 0.0f.
-		*/
-		constexpr size_t quadVertexCount = 4;
-		constexpr glm::vec2 textureCoords[] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
-
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-		{
-			FlushAndReset();
-		}
-
-		float textureIndex = 0.0f;
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
-		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
-			{
-				textureIndex = (float)i;
-				break;
-			}
-		}
-
-		/*
-			Checks whether the textureIndex variable is equal to 0.0f. If it is, it means that the texture being used for the current quad has not been added to the texture slot yet.
-			In that case, the code checks if the current number of texture slots is greater than or equal to the maximum number of texture slots that can be used in the renderer.
-			If so, it calls the FlushAndReset() function to render the current batch of quads and reset the state of the renderer.
-
-			If there is still room for another texture slot, the code assigns the current index value of s_Data.TextureSlotIndex to textureIndex, adds the current texture to the texture slot array, and increments the value of s_Data.TextureSlotIndex to reserve the next slot for future use.
-		*/
-		if (textureIndex == 0.0f)
-		{
-			if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
-			{
-				FlushAndReset();
-			}
-
-			textureIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
-		}
 
 		/*
 			Defines a transformation matrix, which can be used to transform the position, rotation, and scale of an object in 2D space.
@@ -614,30 +521,7 @@ namespace Arklumos
 		*/
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-		/*
-			Iterates over the four vertices of the quad and performs the following operations for each vertex:
-
-					Multiplies the vertex position by a transform matrix which contains translation, rotation, and scaling transformations. This transforms the vertex's position from object space to world space.
-					Sets the color of the vertex to the given tint color.
-					Sets the texture coordinate of the vertex to the corresponding texture coordinate from the textureCoords array.
-					Sets the texture index of the vertex to textureIndex, which was calculated earlier.
-					Sets the tiling factor of the vertex to tilingFactor.
-
-			After the loop, the number of indices in the quad is incremented
-		*/
-		for (size_t i = 0; i < quadVertexCount; i++)
-		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = tintColor;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr++;
-		}
-
-		s_Data.QuadIndexCount += 6;
-
-		s_Data.Stats.QuadCount++;
+		DrawQuad(transform, texture, tilingFactor, tintColor);
 	}
 
 	void Renderer2D::ResetStats()

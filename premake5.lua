@@ -23,6 +23,7 @@ IncludeDir["glad"] = "Arklumos/vendor/glad/include"
 IncludeDir["ImGui"] = "Arklumos/vendor/imgui"
 IncludeDir["glm"] = "Arklumos/vendor/glm"
 IncludeDir["stb_image"] = "Arklumos/vendor/stb_image"
+IncludeDir["entt"] = "Arklumos/vendor/entt/include"
 
 group "Dependencies"
 	include "Arklumos/vendor/GLFW"
@@ -68,7 +69,8 @@ project "Arklumos"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.entt}"
 	}
 
 	links 
@@ -122,7 +124,8 @@ project "Testbox"
 		"Arklumos/vendor/spdlog/include",
 		"Arklumos/src",
 		"Arklumos/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 
 	links
@@ -170,7 +173,8 @@ project "Arklusis"
 		"Arklumos/vendor/spdlog/include",
 		"Arklumos/src",
 		"Arklumos/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 
 	links

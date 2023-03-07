@@ -7,6 +7,7 @@
 #include "Arklumos/Core/Application.h"
 #include "Arklumos/Core/Layer.h"
 #include "Arklumos/Core/Log.h"
+#include "Arklumos/Core/Assert.h"
 
 #include "Arklumos/Core/Timestep.h"
 

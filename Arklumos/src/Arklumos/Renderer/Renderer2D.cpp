@@ -218,10 +218,6 @@ namespace Arklumos
 	/*
 		Begins a new rendering scene with the given OrthographicCamera by binding the texture shader and setting the view projection matrix uniform to the view projection matrix of the given camera.
 
-		s_Data.QuadIndexCount is set to zero to start counting the number of indices.
-		s_Data.QuadVertexBufferPtr is set to s_Data.QuadVertexBufferBase, which is the pointer to the base of the quad vertex buffer, indicating that the next vertex data should be written at the beginning of the vertex buffer.
-
-		s_Data.TextureSlotIndex is set to 1 to start assigning texture slots from the index 1, because the index 0 is reserved for the white texture.
 	*/
 	void Renderer2D::BeginScene(const OrthographicCamera &camera)
 	{
@@ -230,10 +226,7 @@ namespace Arklumos
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
+		StartBatch();
 	}
 
 	void Renderer2D::BeginScene(const Camera &camera, const glm::mat4 &transform)
@@ -245,10 +238,7 @@ namespace Arklumos
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
+		StartBatch();
 	}
 
 	/*
@@ -263,10 +253,22 @@ namespace Arklumos
 	{
 		// AK_PROFILE_FUNCTION();
 
-		uint32_t dataSize = (uint32_t)((uint8_t *)s_Data.QuadVertexBufferPtr - (uint8_t *)s_Data.QuadVertexBufferBase);
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
-
 		Flush();
+	}
+
+	/*
+		StartBatch
+
+		s_Data.QuadIndexCount is set to zero to start counting the number of indices.
+		s_Data.QuadVertexBufferPtr is set to s_Data.QuadVertexBufferBase, which is the pointer to the base of the quad vertex buffer, indicating that the next vertex data should be written at the beginning of the vertex buffer.
+		s_Data.TextureSlotIndex is set to 1 to start assigning texture slots from the index 1, because the index 0 is reserved for the white texture.
+	*/
+	void Renderer2D::StartBatch()
+	{
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
 	}
 
 	/*
@@ -289,6 +291,9 @@ namespace Arklumos
 			return; // Nothing to draw
 		}
 
+		uint32_t dataSize = (uint32_t)((uint8_t *)s_Data.QuadVertexBufferPtr - (uint8_t *)s_Data.QuadVertexBufferBase);
+		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+
 		// Bind textures
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 		{
@@ -302,24 +307,12 @@ namespace Arklumos
 	/*
 		End the current scene and reset the internal state of the 2D renderer for the next frame.
 
-		First, it calls the EndScene function to finalize any pending draw calls and uploads the vertex data to the GPU.
-
-		Then, it resets the following state variables:
-
-				QuadIndexCount: sets it to 0 to clear the accumulated quad index count from the previous frame.
-				QuadVertexBufferPtr: sets it to the beginning of the vertex buffer to prepare for new vertex data.
-				TextureSlotIndex: sets it to 1, indicating that the first texture slot (index 0) is already occupied by the white texture and the next available texture slot index is 1.
-
 		This function is typically called at the end of each frame to prepare the renderer for the next frame's drawing operations
 	*/
-	void Renderer2D::FlushAndReset()
+	void Renderer2D::NextBatch()
 	{
-		EndScene();
-
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
+		Flush();
+		StartBatch();
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color)
@@ -370,7 +363,7 @@ namespace Arklumos
 		// Checks if there are enough indices left to draw the quad. If there are not, the FlushAndReset() function is called to draw the existing batch of quads and reset the vertex buffer and index count for the next batch
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 		{
-			FlushAndReset();
+			NextBatch();
 		}
 
 		/*
@@ -406,7 +399,7 @@ namespace Arklumos
 			The coordinates are defined in counter-clockwise order starting from the bottom-left vertex.
 
 			The code then checks if the current number of quad indices has exceeded the maximum number of indices allowed in the renderer's data object (Renderer2DData::MaxIndices).
-			If it has, the FlushAndReset() function is called, which sends the current batch of quads to be drawn and resets the renderer's state to start a new batch.
+			If it has, the NextBatch() function is called, which sends the current batch of quads to be drawn and resets the renderer's state to start a new batch.
 			This check is necessary because the number of indices is limited by the underlying graphics API and hardware.
 		*/
 		constexpr size_t quadVertexCount = 4;
@@ -414,7 +407,7 @@ namespace Arklumos
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 		{
-			FlushAndReset();
+			NextBatch();
 		}
 
 		/*
@@ -442,7 +435,7 @@ namespace Arklumos
 		/*
 			Checks if the texture index is equal to zero, which means that the texture has not been previously bound.
 			If the texture index is zero, the code checks whether there is space for another texture slot in the Renderer2DData::MaxTextureSlots array.
-			If there is no space, the FlushAndReset function is called to clear the current buffer and start anew.
+			If there is no space, the NextBatch function is called to clear the current buffer and start anew.
 
 			If there is space, the texture is assigned to the s_Data.TextureSlots array at the s_Data.TextureSlotIndex position and the texture index is set to this value.
 			The s_Data.TextureSlotIndex is then incremented to reserve the next available texture slot for future use.
@@ -451,7 +444,7 @@ namespace Arklumos
 		{
 			if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
 			{
-				FlushAndReset();
+				NextBatch();
 			}
 
 			textureIndex = (float)s_Data.TextureSlotIndex;

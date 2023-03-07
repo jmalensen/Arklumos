@@ -1,5 +1,5 @@
 #include "akpch.h"
-#include "OpenGLFramebuffer.h"
+#include "Platform/OpenGL/OpenGLFramebuffer.h"
 
 #include <glad/glad.h>
 
@@ -69,7 +69,19 @@ namespace Arklumos
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		//
+		/*
+			Set up a framebuffer object in OpenGL. A framebuffer object is a special object that allows for rendering to an off-screen texture or a set of textures.
+
+			The first line sets the color attachment of the framebuffer object to a 2D texture object identified by m_ColorAttachment.
+			This means that any rendering done to this framebuffer object will be written to the texture object.
+
+			The next few lines create and set up a depth-stencil attachment for the framebuffer object.
+			This attachment is a 2D texture object identified by m_DepthAttachment and is used for depth and stencil testing.
+			The glTexStorage2D function is used to allocate storage for the texture object and set its format to GL_DEPTH24_STENCIL8.
+
+			Finally, the code checks if the framebuffer object is complete by calling glCheckFramebufferStatus.
+			If the framebuffer object is complete, it is unbound from the current context by calling glBindFramebuffer(GL_FRAMEBUFFER, 0)
+		*/
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
@@ -82,6 +94,16 @@ namespace Arklumos
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	/*
+		Binds the framebuffer object to the current rendering context so that any subsequent rendering operations will be directed to the attached textures.
+
+		The first line of the function binds the framebuffer object to the rendering context using glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID).
+		The m_RendererID member variable is the ID of the framebuffer object.
+
+		The second line of the function sets the viewport for the current context to match the dimensions of the framebuffer object.
+		This ensures that rendering operations are directed to the correct portion of the screen.
+		glViewport(0, 0, m_Specification.Width, m_Specification.Height) sets the viewport to start at the bottom left corner of the window (0,0) and have the same width and height as the framebuffer object
+	*/
 	void OpenGLFramebuffer::Bind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);

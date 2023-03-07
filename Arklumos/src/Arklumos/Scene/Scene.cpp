@@ -57,17 +57,27 @@ namespace Arklumos
 		}
 
 		// Render 2D
+		/*
+			Search for a primary camera in a registry of entities that have both a TransformComponent and a CameraComponent.
+
+			After this code runs, mainCamera will point to the primary camera object in the registry (if one was found), and cameraTransform will point to the transform matrix associated with that camera.
+			These pointers can then be used elsewhere in the code to access and manipulate the camera's properties.
+		*/
 		Camera *mainCamera = nullptr;
 		glm::mat4 *cameraTransform = nullptr;
 		{
+			// Creates a view of the entities in the registry that have both TransformComponent and CameraComponent attached to them. A view is an object that provides an efficient way to iterate over entities that meet certain criteria.
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view)
 			{
+				// Retrieves the TransformComponent and CameraComponent attached to the current entity in the loop, using structured binding syntax. The get method of the view takes an entity ID and a list of component types and returns references to the corresponding components.
 				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
 				if (camera.Primary)
 				{
+					// If the current camera component is marked as the primary camera, this line assigns the address of its Camera member to the mainCamera pointer.
 					mainCamera = &camera.Camera;
+					// Assigns the address of its Transform member to the cameraTransform pointer
 					cameraTransform = &transform.Transform;
 					break;
 				}
@@ -76,23 +86,22 @@ namespace Arklumos
 
 		if (mainCamera)
 		{
-			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+			// Begins a new rendering scene using the Renderer2D class, passing in the camera and camera transform matrix that were found earlier.
+			// BeginScene sets up the rendering environment with the appropriate view and projection matrices based on the camera properties.
+			Renderer2D::BeginScene(*mainCamera, *cameraTransform);
 
+			// Creates a group of entities in the registry that have both TransformComponent and SpriteRendererComponent attached to them. A group is a view that provides a way to iterate over entities that have specific combinations of components.
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
-				// Need to add const otherwise we have this error:
-				// cannot bind non-const lvalue reference of type 'std::tuple<Arklumos::TransformComponent&, Arklumos::SpriteRendererComponent&>&' to an rvalue of type 'std::tuple<Arklumos::TransformComponent&, Arklumos::SpriteRendererComponent&>'
-
-				// Use a const lvalue reference
-				//  const auto &[transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-				// If you need to modify the values of the tuple elements, you can copy the tuple instead of binding a reference to it
+				// Retrieves the TransformComponent and SpriteRendererComponent attached to the current entity in the loop, using structured binding syntax. The get method of the group takes an entity ID and a list of component types and returns references to the corresponding components.
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
+				// Draws a quad (i.e., a rectangular shape) using the Renderer2D class, passing in the transform and sprite color of the current entity. The DrawQuad method is responsible for rendering the sprite on the screen using the appropriate shaders and textures
 				Renderer2D::DrawQuad(transform, sprite.Color);
 			}
 
+			// Ends the current rendering scene
 			Renderer2D::EndScene();
 		}
 	}
@@ -103,12 +112,17 @@ namespace Arklumos
 		m_ViewportHeight = height;
 
 		// Resize our non-FixedAspectRatio cameras
+		// Creates a view of all entities in the registry that have a CameraComponent. A view is a lightweight object that allows iteration over entities with specific component types
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
+			// Retrieves the CameraComponent attached to the current entity in the loop using a reference. The get method of the view takes an entity ID and a component type and returns a reference to the corresponding component
 			auto &cameraComponent = view.get<CameraComponent>(entity);
+
+			// Checks if the camera has a fixed aspect ratio. If it does not, we need to adjust its viewport size to match the new screen dimensions
 			if (!cameraComponent.FixedAspectRatio)
 			{
+				// Sets the viewport size of the camera to the new dimensions (specified by width and height)
 				cameraComponent.Camera.SetViewportSize(width, height);
 			}
 		}

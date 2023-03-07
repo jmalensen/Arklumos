@@ -26,7 +26,7 @@ namespace Arklumos
 		AK_CORE_INFO("Vendor: {}", reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
 		AK_CORE_INFO("Vendor: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 
-		AK_CORE_ASSERT(GLVersion.major > 4 || (GLVersion.major == 4 && GLVersion.minor >= 5), "Hazel requires at least OpenGL version 4.5!");
+		AK_CORE_ASSERT(GLVersion.major > 4 || (GLVersion.major == 4 && GLVersion.minor >= 5), "Arklumos requires at least OpenGL version 4.5!");
 	}
 
 	void OpenGLContext::SwapBuffers()

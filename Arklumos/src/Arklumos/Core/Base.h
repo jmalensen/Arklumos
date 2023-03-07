@@ -18,28 +18,8 @@
 #define AK_DEBUGBREAK()
 #endif
 
-// TODO: Make this macro able to take in no arguments except condition
-#ifdef AK_ENABLE_ASSERTS
-#define AK_ASSERT(x, ...)                             \
-	{                                                   \
-		if (!(x))                                         \
-		{                                                 \
-			AK_ERROR("Assertion Failed: {0}", __VA_ARGS__); \
-			AK_DEBUGBREAK();                                \
-		}                                                 \
-	}
-#define AK_CORE_ASSERT(x, ...)                             \
-	{                                                        \
-		if (!(x))                                              \
-		{                                                      \
-			AK_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); \
-			AK_DEBUGBREAK();                                     \
-		}                                                      \
-	}
-#else
-#define AK_ASSERT(x, ...)
-#define AK_CORE_ASSERT(x, ...)
-#endif
+#define AK_EXPAND_MACRO(x) x
+#define AK_STRINGIFY_MACRO(x) #x
 
 /* Allow us to use Macro BIT for example: BIT(1), BIT(2)
 	Differents events can go in differents categories
@@ -74,3 +54,6 @@ namespace Arklumos
 	}
 
 }
+
+#include "Arklumos/Core/Log.h"
+#include "Arklumos/Core/Assert.h"

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Arklumos/Core/Base.h"
-#include "Arklumos/Core/Log.h"
 #include "Arklumos/Scene/Scene.h"
 #include "Arklumos/Scene/Entity.h"
 

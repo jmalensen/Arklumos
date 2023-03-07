@@ -9,6 +9,7 @@
 							"Arklumos/vendor/glad/include",
 							"Arklumos/vendor/imgui",
 							"Arklumos/vendor/stb_image",
+							"Arklumos/vendor/yaml-cpp/include",
 							"${workspaceFolder}/**"
 					],
 					"defines": [

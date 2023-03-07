@@ -28,6 +28,11 @@ namespace Arklumos
 		return entity;
 	}
 
+	void Scene::DestroyEntity(Entity entity)
+	{
+		m_Registry.destroy(entity);
+	}
+
 	void Scene::OnUpdate(Timestep ts)
 	{
 		// Update scripts
@@ -64,7 +69,7 @@ namespace Arklumos
 			These pointers can then be used elsewhere in the code to access and manipulate the camera's properties.
 		*/
 		Camera *mainCamera = nullptr;
-		glm::mat4 *cameraTransform = nullptr;
+		glm::mat4 cameraTransform;
 		{
 			// Creates a view of the entities in the registry that have both TransformComponent and CameraComponent attached to them. A view is an object that provides an efficient way to iterate over entities that meet certain criteria.
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
@@ -78,7 +83,7 @@ namespace Arklumos
 					// If the current camera component is marked as the primary camera, this line assigns the address of its Camera member to the mainCamera pointer.
 					mainCamera = &camera.Camera;
 					// Assigns the address of its Transform member to the cameraTransform pointer
-					cameraTransform = &transform.Transform;
+					cameraTransform = transform.GetTransform();
 					break;
 				}
 			}
@@ -88,7 +93,7 @@ namespace Arklumos
 		{
 			// Begins a new rendering scene using the Renderer2D class, passing in the camera and camera transform matrix that were found earlier.
 			// BeginScene sets up the rendering environment with the appropriate view and projection matrices based on the camera properties.
-			Renderer2D::BeginScene(*mainCamera, *cameraTransform);
+			Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
 			// Creates a group of entities in the registry that have both TransformComponent and SpriteRendererComponent attached to them. A group is a view that provides a way to iterate over entities that have specific combinations of components.
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
@@ -98,7 +103,7 @@ namespace Arklumos
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
 				// Draws a quad (i.e., a rectangular shape) using the Renderer2D class, passing in the transform and sprite color of the current entity. The DrawQuad method is responsible for rendering the sprite on the screen using the appropriate shaders and textures
-				Renderer2D::DrawQuad(transform, sprite.Color);
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 			}
 
 			// Ends the current rendering scene
@@ -126,6 +131,38 @@ namespace Arklumos
 				cameraComponent.Camera.SetViewportSize(width, height);
 			}
 		}
+	}
+
+	template <typename T>
+	void Scene::OnComponentAdded(Entity entity, T &component)
+	{
+		// static_assert(false);
+	}
+
+	template <>
+	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent &component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent &component)
+	{
+		component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template <>
+	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent &component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent &component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent &component)
+	{
 	}
 
 }

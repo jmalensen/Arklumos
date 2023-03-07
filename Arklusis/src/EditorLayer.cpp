@@ -4,6 +4,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Arklumos/Scene/SceneSerializer.h"
+#include "Arklumos/Utils/PlatformUtils.h"
+
 namespace Arklumos
 {
 
@@ -25,6 +28,7 @@ namespace Arklumos
 
 		m_ActiveScene = CreateRef<Scene>();
 
+#if 0
 		// Entity
 		auto square = m_ActiveScene->CreateEntity("Green Square");
 		square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
@@ -46,8 +50,8 @@ namespace Arklumos
 		public:
 			virtual void OnCreate() override
 			{
-				auto &transform = GetComponent<TransformComponent>().Transform;
-				transform[3][0] = rand() % 10 - 5.0f;
+				auto &translation = GetComponent<TransformComponent>().Translation;
+				translation.x = rand() % 10 - 5.0f;
 			}
 
 			virtual void OnDestroy() override
@@ -56,31 +60,32 @@ namespace Arklumos
 
 			virtual void OnUpdate(Timestep ts) override
 			{
-				auto &transform = GetComponent<TransformComponent>().Transform;
+				auto &translation = GetComponent<TransformComponent>().Translation;
 
 				float speed = 5.0f;
 
 				if (Input::IsKeyPressed(Key::A))
 				{
-					transform[3][0] -= speed * ts;
+					translation.x -= speed * ts;
 				}
 				if (Input::IsKeyPressed(Key::D))
 				{
-					transform[3][0] += speed * ts;
+					translation.x += speed * ts;
 				}
 				if (Input::IsKeyPressed(Key::W))
 				{
-					transform[3][1] += speed * ts;
+					translation.y += speed * ts;
 				}
 				if (Input::IsKeyPressed(Key::S))
 				{
-					transform[3][1] -= speed * ts;
+					translation.y -= speed * ts;
 				}
 			}
 		};
 
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+#endif
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
@@ -170,11 +175,16 @@ namespace Arklumos
 
 		// DockSpace
 		ImGuiIO &io = ImGui::GetIO();
+		ImGuiStyle &style = ImGui::GetStyle();
+		float minWinSizeX = style.WindowMinSize.x;
+		style.WindowMinSize.x = 370.0f;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
+
+		style.WindowMinSize.x = minWinSizeX;
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -183,6 +193,21 @@ namespace Arklumos
 				// Disabling fullscreen would allow the window to be moved to the front of other windows,
 				// which we can't undo at the moment without finer window depth/z control.
 				// ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+
+				if (ImGui::MenuItem("New", "Ctrl+N"))
+				{
+					NewScene();
+				}
+
+				if (ImGui::MenuItem("Open...", "Ctrl+O"))
+				{
+					OpenScene();
+				}
+
+				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+				{
+					SaveSceneAs();
+				}
 
 				if (ImGui::MenuItem("Exit"))
 				{
@@ -230,6 +255,82 @@ namespace Arklumos
 	void EditorLayer::OnEvent(Event &e)
 	{
 		m_CameraController.OnEvent(e);
+
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<KeyPressedEvent>(AK_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent &e)
+	{
+		// Shortcuts
+		if (e.GetRepeatCount() > 0)
+			return false;
+
+		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+		switch (e.GetKeyCode())
+		{
+		case Key::N:
+		{
+			if (control)
+			{
+				NewScene();
+			}
+
+			break;
+		}
+		case Key::O:
+		{
+			if (control)
+			{
+				OpenScene();
+			}
+
+			break;
+		}
+		case Key::S:
+		{
+			if (control && shift)
+			{
+				SaveSceneAs();
+			}
+
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::optional<std::string> filepath = FileDialogs::OpenFile("Arklumos Scene (*.arklumos)\0*.arklumos\0");
+		if (filepath)
+		{
+			m_ActiveScene = CreateRef<Scene>();
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(*filepath);
+		}
+	}
+
+	void EditorLayer::SaveSceneAs()
+	{
+		std::optional<std::string> filepath = FileDialogs::SaveFile("Arklumos Scene (*.arklumos)\0*.arklumos\0");
+		if (!filepath)
+		{
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Serialize(*filepath);
+		}
 	}
 
 }

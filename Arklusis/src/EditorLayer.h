@@ -3,6 +3,8 @@
 #include "Arklumos.h"
 #include "Panels/SceneHierarchyPanel.h"
 
+#include "Arklumos/Scene/SceneSerializer.h"
+
 namespace Arklumos
 {
 
@@ -20,6 +22,12 @@ namespace Arklumos
 		void OnEvent(Event &e) override;
 
 	private:
+		bool OnKeyPressed(KeyPressedEvent &e);
+
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
+
 		Arklumos::OrthographicCameraController m_CameraController;
 
 		// Temp

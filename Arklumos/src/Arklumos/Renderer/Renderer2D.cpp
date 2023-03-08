@@ -241,6 +241,18 @@ namespace Arklumos
 		StartBatch();
 	}
 
+	void Renderer2D::BeginScene(const EditorCamera &camera)
+	{
+		// AK_PROFILE_FUNCTION();
+
+		glm::mat4 viewProj = camera.GetViewProjection();
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+		StartBatch();
+	}
+
 	/*
 		End a 2D rendering scene. It is responsible for finalizing the rendering state and flushing all the rendered data to the screen.
 

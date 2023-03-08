@@ -9,6 +9,8 @@
 
 // TODO: Temp ?
 #include <GLFW/glfw3.h>
+
+#include "ImGuizmo.h"
 namespace Arklumos
 {
 
@@ -142,6 +144,7 @@ namespace Arklumos
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	/*

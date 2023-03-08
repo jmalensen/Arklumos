@@ -18,3 +18,8 @@
 	path = Arklumos/vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
 	branch = master
+[submodule "Arklumos/vendor/ImGuizmo"]
+	path = Arklumos/vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git
+	# last stable 07/03/2023
+	branch = 1.83

@@ -1,0 +1,29 @@
+
+# Set the minimum required version of CMake
+cmake_minimum_required(VERSION 3.16)
+
+# Set the project name
+set(PROJECT_NAME imguizmo)
+project(${PROJECT_NAME})
+
+file(GLOB IMGUIZMO_SRC_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+)
+
+file(GLOB IMGUIZMO_HEADERS_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
+
+# Add the source files to the project
+add_library(${PROJECT_NAME} STATIC
+			${IMGUIZMO_SRC_FILES}
+			${IMGUIZMO_HEADERS_FILES}
+)
+
+# Link the imguizmo with the required libraries depending on the system
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	message(STATUS "imguizmo for Windows")
+
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	message(STATUS "imguizmo for Linux")
+endif()

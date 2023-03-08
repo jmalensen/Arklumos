@@ -8,9 +8,108 @@ namespace Arklumos
 
 	static const uint32_t s_MaxFramebufferSize = 8192;
 
+	namespace Utils
+	{
+
+		static GLenum TextureTarget(bool multisampled)
+		{
+			return multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+		}
+
+		static void CreateTextures(bool multisampled, uint32_t *outID, uint32_t count)
+		{
+			glCreateTextures(TextureTarget(multisampled), count, outID);
+		}
+
+		static void BindTexture(bool multisampled, uint32_t id)
+		{
+			glBindTexture(TextureTarget(multisampled), id);
+		}
+
+		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
+		{
+			bool multisampled = samples > 1;
+			if (multisampled)
+			{
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
+			}
+			else
+			{
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			}
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multisampled), id, 0);
+		}
+
+		static void AttachDepthTexture(uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
+		{
+			bool multisampled = samples > 1;
+			if (multisampled)
+			{
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
+			}
+			else
+			{
+				glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			}
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
+		}
+
+		static bool IsDepthFormat(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case FramebufferTextureFormat::DEPTH24STENCIL8:
+				return true;
+			}
+
+			return false;
+		}
+
+		static GLenum HazelFBTextureFormatToGL(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case FramebufferTextureFormat::RGBA8:
+				return GL_RGBA8;
+			case FramebufferTextureFormat::RED_INTEGER:
+				return GL_RED_INTEGER;
+			}
+
+			AK_CORE_ASSERT(false);
+			return 0;
+		}
+
+	}
+
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification &spec)
 			: m_Specification(spec)
 	{
+		for (auto spec : m_Specification.Attachments.Attachments)
+		{
+			if (!Utils::IsDepthFormat(spec.TextureFormat))
+			{
+				m_ColorAttachmentSpecifications.emplace_back(spec);
+			}
+			else
+			{
+				m_DepthAttachmentSpecification = spec;
+			}
+		}
+
 		Invalidate();
 	}
 
@@ -19,7 +118,7 @@ namespace Arklumos
 		// Deletes a single framebuffer object, identified by the m_RendererID member variable of the OpenGLFramebuffer object. A framebuffer object is an OpenGL object that contains a set of buffers for storing color, depth, and stencil information used for rendering.
 		glDeleteFramebuffers(1, &m_RendererID);
 		// Delete the two texture objects used for color and depth attachments, identified by the m_ColorAttachment and m_DepthAttachment member variables, respectively. Texture objects are used to store and manipulate texture images in OpenGL, and they can be used as attachments to a framebuffer object for rendering
-		glDeleteTextures(1, &m_ColorAttachment);
+		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
@@ -39,8 +138,11 @@ namespace Arklumos
 		if (m_RendererID)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
-			glDeleteTextures(1, &m_ColorAttachment);
+			glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
 			glDeleteTextures(1, &m_DepthAttachment);
+
+			m_ColorAttachments.clear();
+			m_DepthAttachment = 0;
 		}
 
 		/*
@@ -49,45 +151,56 @@ namespace Arklumos
 			The first line of code creates a single framebuffer object using the glCreateFramebuffers function from the OpenGL library. The function takes two parameters: the number of framebuffer objects to create (in this case, just one), and a pointer to an array of framebuffer object names to be created. The function returns the name of the newly created framebuffer object in the variable m_RendererID.
 
 			The second line of code binds the newly created framebuffer object to the render target using the glBindFramebuffer function. The function takes two parameters: the target (in this case, GL_FRAMEBUFFER), and the name of the framebuffer object to bind (m_RendererID in this case).
-
-			The next three lines of code create a new 2D texture object using the glCreateTextures function. The function takes three parameters: the type of texture object to create (in this case, GL_TEXTURE_2D), the number of texture objects to create (in this case, just one), and a pointer to an array of texture object names to be created. The function returns the name of the newly created texture object in the variable m_ColorAttachment.
-
-			The fifth line of code binds the newly created texture object to the current texture unit using the glBindTexture function. The function takes two parameters: the target (in this case, GL_TEXTURE_2D), and the name of the texture object to bind (m_ColorAttachment in this case).
-
-			The sixth line of code sets the data for the texture object using the glTexImage2D function. The function takes nine parameters: the type of texture object being modified (in this case, GL_TEXTURE_2D), the level of detail (in this case, 0), the internal format of the texture (in this case, GL_RGBA8), the width and height of the texture (specified by m_Specification.Width and m_Specification.Height), the border (0 in this case), the format of the pixel data (in this case, GL_RGBA), the data type of the pixel data (in this case, GL_UNSIGNED_BYTE), and a pointer to the pixel data (in this case, nullptr since we're not setting any data yet).
-
-			The seventh and eighth lines of code set the filtering parameters for the texture object using the glTexParameteri function. The function takes three parameters: the type of texture object being modified (in this case, GL_TEXTURE_2D), the parameter to set (in this case, GL_TEXTURE_MIN_FILTER and GL_TEXTURE_MAG_FILTER), and the value to set the parameter to (in this case, GL_LINEAR).
-
-			In summary, this code is initializing an OpenGL framebuffer object by creating and binding it to a render target, and creating and attaching a color texture to the framebuffer object.
 		*/
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttachment);
-		glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Specification.Width, m_Specification.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		bool multisample = m_Specification.Samples > 1;
 
-		/*
-			Set up a framebuffer object in OpenGL. A framebuffer object is a special object that allows for rendering to an off-screen texture or a set of textures.
+		// Attachments
+		if (m_ColorAttachmentSpecifications.size())
+		{
+			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
+			Utils::CreateTextures(multisample, m_ColorAttachments.data(), m_ColorAttachments.size());
 
-			The first line sets the color attachment of the framebuffer object to a 2D texture object identified by m_ColorAttachment.
-			This means that any rendering done to this framebuffer object will be written to the texture object.
+			for (size_t i = 0; i < m_ColorAttachments.size(); i++)
+			{
+				Utils::BindTexture(multisample, m_ColorAttachments[i]);
+				switch (m_ColorAttachmentSpecifications[i].TextureFormat)
+				{
+				case FramebufferTextureFormat::RGBA8:
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+					break;
+				case FramebufferTextureFormat::RED_INTEGER:
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
+					break;
+				}
+			}
+		}
 
-			The next few lines create and set up a depth-stencil attachment for the framebuffer object.
-			This attachment is a 2D texture object identified by m_DepthAttachment and is used for depth and stencil testing.
-			The glTexStorage2D function is used to allocate storage for the texture object and set its format to GL_DEPTH24_STENCIL8.
+		if (m_DepthAttachmentSpecification.TextureFormat != FramebufferTextureFormat::None)
+		{
+			Utils::CreateTextures(multisample, &m_DepthAttachment, 1);
+			Utils::BindTexture(multisample, m_DepthAttachment);
+			switch (m_DepthAttachmentSpecification.TextureFormat)
+			{
+			case FramebufferTextureFormat::DEPTH24STENCIL8:
+				Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+				break;
+			}
+		}
 
-			Finally, the code checks if the framebuffer object is complete by calling glCheckFramebufferStatus.
-			If the framebuffer object is complete, it is unbound from the current context by calling glBindFramebuffer(GL_FRAMEBUFFER, 0)
-		*/
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
-
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
-		glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
+		if (m_ColorAttachments.size() > 1)
+		{
+			AK_CORE_ASSERT(m_ColorAttachments.size() <= 4);
+			GLenum buffers[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
+			glDrawBuffers(m_ColorAttachments.size(), buffers);
+		}
+		else if (m_ColorAttachments.empty())
+		{
+			// Only depth-pass
+			glDrawBuffer(GL_NONE);
+		}
 
 		AK_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
@@ -127,6 +240,25 @@ namespace Arklumos
 		m_Specification.Height = height;
 
 		Invalidate();
+	}
+
+	int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+	{
+		AK_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
+
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+		int pixelData;
+		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+		return pixelData;
+	}
+
+	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	{
+		AK_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
+
+		auto &spec = m_ColorAttachmentSpecifications[attachmentIndex];
+		glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
+										Utils::HazelFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
 	}
 
 }

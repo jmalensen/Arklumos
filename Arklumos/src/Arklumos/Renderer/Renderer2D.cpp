@@ -30,6 +30,9 @@ namespace Arklumos
 		glm::vec2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
+
+		// Only for the editor
+		int EntityID;
 	};
 
 	/*
@@ -97,7 +100,8 @@ namespace Arklumos
 																				{ShaderDataType::Float4, "a_Color"},
 																				{ShaderDataType::Float2, "a_TexCoord"},
 																				{ShaderDataType::Float, "a_TexIndex"},
-																				{ShaderDataType::Float, "a_TilingFactor"}});
+																				{ShaderDataType::Float, "a_TilingFactor"},
+																				{ShaderDataType::Int, "a_EntityID"}});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
 		// New QuadVertex
@@ -355,7 +359,7 @@ namespace Arklumos
 		DrawQuad(transform, texture, tilingFactor, tintColor);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color)
+	void Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color, int entityID)
 	{
 		// AK_PROFILE_FUNCTION();
 
@@ -394,6 +398,7 @@ namespace Arklumos
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
 
@@ -402,7 +407,7 @@ namespace Arklumos
 		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4 &transform, const Ref<Texture2D> &texture, float tilingFactor, const glm::vec4 &tintColor)
+	void Renderer2D::DrawQuad(const glm::mat4 &transform, const Ref<Texture2D> &texture, float tilingFactor, const glm::vec4 &tintColor, int entityID)
 	{
 		// AK_PROFILE_FUNCTION();
 
@@ -471,6 +476,7 @@ namespace Arklumos
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
 
@@ -527,6 +533,11 @@ namespace Arklumos
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
 		DrawQuad(transform, texture, tilingFactor, tintColor);
+	}
+
+	void Renderer2D::DrawSprite(const glm::mat4 &transform, SpriteRendererComponent &src, int entityID)
+	{
+		DrawQuad(transform, src.Color, entityID);
 	}
 
 	void Renderer2D::ResetStats()

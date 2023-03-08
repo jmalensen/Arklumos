@@ -102,8 +102,7 @@ namespace Arklumos
 				// Retrieves the TransformComponent and SpriteRendererComponent attached to the current entity in the loop, using structured binding syntax. The get method of the group takes an entity ID and a list of component types and returns references to the corresponding components.
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				// Draws a quad (i.e., a rectangular shape) using the Renderer2D class, passing in the transform and sprite color of the current entity. The DrawQuad method is responsible for rendering the sprite on the screen using the appropriate shaders and textures
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 			}
 
 			// Ends the current rendering scene
@@ -120,7 +119,7 @@ namespace Arklumos
 		{
 			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 		}
 
 		Renderer2D::EndScene();

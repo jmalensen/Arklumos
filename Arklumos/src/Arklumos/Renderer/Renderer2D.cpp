@@ -3,9 +3,11 @@
 
 #include "Arklumos/Renderer/VertexArray.h"
 #include "Arklumos/Renderer/Shader.h"
+#include "Arklumos/Renderer/UniformBuffer.h"
 #include "Arklumos/Renderer/RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Arklumos
 {
@@ -76,6 +78,13 @@ namespace Arklumos
 		glm::vec4 QuadVertexPositions[4];
 
 		Renderer2D::Statistics Stats;
+
+		struct CameraData
+		{
+			glm::mat4 ViewProjection;
+		};
+		CameraData CameraBuffer;
+		Ref<UniformBuffer> CameraUniformBuffer;
 	};
 
 	static Renderer2DData s_Data;
@@ -175,19 +184,8 @@ namespace Arklumos
 			samplers[i] = i;
 		}
 
-		/*
-			Creates a new shader program by loading the shader source code from a file named "Texture.glsl" located in the "assets/shaders/" directory. The newly created shader program is then bound for use.
-
-			Next, an integer array samplers of size s_Data.MaxTextureSlots is created, where each element is initialized to its own index value.
-			Then, the integer array samplers is passed to the shader program's uniform u_Textures as an integer array.
-
-			This allows the shader program to access multiple textures using texture units. Each element in the samplers array represents a texture unit, which can be used to bind textures to that unit.
-			When a texture is bound to a specific texture unit, the integer value representing that texture unit is passed as the TexIndex value of the QuadVertex struct for each vertex.
-			This way, the shader program can look up the correct texture for each vertex based on its TexIndex value
-		*/
+		// Creates a new shader program by loading the shader source code from a file named "Texture.glsl" located in the "assets/shaders/" directory. The newly created shader program is then bound for use.
 		s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
 		// Set first texture slot to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
@@ -210,6 +208,8 @@ namespace Arklumos
 		s_Data.QuadVertexPositions[1] = {0.5f, -0.5f, 0.0f, 1.0f};
 		s_Data.QuadVertexPositions[2] = {0.5f, 0.5f, 0.0f, 1.0f};
 		s_Data.QuadVertexPositions[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
+
+		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
 	}
 
 	void Renderer2D::Shutdown()
@@ -237,10 +237,8 @@ namespace Arklumos
 	{
 		// AK_PROFILE_FUNCTION();
 
-		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
-
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartBatch();
 	}
@@ -249,10 +247,8 @@ namespace Arklumos
 	{
 		// AK_PROFILE_FUNCTION();
 
-		glm::mat4 viewProj = camera.GetViewProjection();
-
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartBatch();
 	}
@@ -316,6 +312,7 @@ namespace Arklumos
 			s_Data.TextureSlots[i]->Bind(i);
 		}
 
+		s_Data.TextureShader->Bind();
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
 	}

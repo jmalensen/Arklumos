@@ -9,8 +9,8 @@ namespace Arklumos
 	class Arklusis : public Application
 	{
 	public:
-		Arklusis()
-				: Application("Arklusis the editor")
+		Arklusis(ApplicationCommandLineArgs args)
+				: Application("Arklusis the editor", args)
 		{
 			PushLayer(new EditorLayer());
 		}
@@ -20,9 +20,9 @@ namespace Arklumos
 		}
 	};
 
-	Application *CreateApplication()
+	Application *CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new Arklusis();
+		return new Arklusis(args);
 	}
 
 }

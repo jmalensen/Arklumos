@@ -15,10 +15,22 @@ int main(int argc, char **argv);
 namespace Arklumos
 {
 
+	struct ApplicationCommandLineArgs
+	{
+		int Count = 0;
+		char **Args = nullptr;
+
+		const char *operator[](int index) const
+		{
+			AK_CORE_ASSERT(index < Count);
+			return Args[index];
+		}
+	};
+
 	class Application
 	{
 	public:
-		Application(const std::string &name = "Arklumos App");
+		Application(const std::string &name = "Arklumos App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
 
 		void OnEvent(Event &e);
@@ -34,11 +46,14 @@ namespace Arklumos
 
 		static Application &Get() { return *s_Instance; }
 
+		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
+
 	private:
 		void Run();
 		bool OnWindowClose(WindowCloseEvent &e);
 		bool OnWindowResize(WindowResizeEvent &e);
 
+		ApplicationCommandLineArgs m_CommandLineArgs;
 		Scope<Window> m_Window;
 		ImGuiLayer *m_ImGuiLayer;
 		bool m_Running = true;
@@ -52,5 +67,5 @@ namespace Arklumos
 	};
 
 	// To be defined in CLIENT
-	Application *CreateApplication();
+	Application *CreateApplication(ApplicationCommandLineArgs args);
 }

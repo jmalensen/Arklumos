@@ -8,7 +8,7 @@
 class Testbox : public Arklumos::Application
 {
 public:
-	Testbox()
+	Testbox(Arklumos::ApplicationCommandLineArgs args)
 	{
 		// PushLayer(new ExampleLayer());
 		PushLayer(new Testbox2D());
@@ -19,7 +19,7 @@ public:
 	}
 };
 
-Arklumos::Application *Arklumos::CreateApplication()
+Arklumos::Application *Arklumos::CreateApplication(Arklumos::ApplicationCommandLineArgs args)
 {
-	return new Testbox();
+	return new Testbox(args);
 }

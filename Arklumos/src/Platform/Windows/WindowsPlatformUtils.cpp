@@ -11,7 +11,7 @@
 namespace Arklumos
 {
 
-	std::optional<std::string> FileDialogs::OpenFile(const char *filter)
+	std::string FileDialogs::OpenFile(const char *filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = {0};
@@ -32,7 +32,7 @@ namespace Arklumos
 		{
 			return ofn.lpstrFile;
 		}
-		return std::nullopt;
+		return std::string();
 	}
 
 	std::string FileDialogs::SaveFile(const char *filter)

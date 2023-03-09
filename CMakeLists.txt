@@ -105,10 +105,50 @@ file(GLOB_RECURSE SRC_FILES
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
 
 
+set(VULKAN_SDK C:/VulkanSDK/1.3.216.0)
+# include_directories(${VULKAN_SDK}/Include)
+# find_library(SHADERC_LIB shaderc HINTS ${VULKAN_SDK}/Lib)
+# find_library(SPIRV_LIB spirv HINTS ${VULKAN_SDK}/Lib)
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC ${VULKAN_SDK}/Include
+)
+
+set(VULKAN_LIBS_SPIRV
+		${VULKAN_SDK}/Lib/vulkan-1.lib
+		${VULKAN_SDK}/Lib/VkLayer_utils.lib
+		${VULKAN_SDK}/Lib/shaderc_combined.lib
+		${VULKAN_SDK}/Lib/shaderc_shared.lib
+		${VULKAN_SDK}/Lib/spirv-cross-core.lib
+		${VULKAN_SDK}/Lib/spirv-cross-glsl.lib
+		${VULKAN_SDK}/Lib/SPIRV-Tools.lib
+)
+
+# if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+#     target_link_libraries(${PROJECT_NAME}
+#         PRIVATE ${VULKAN_SDK}/Lib/shaderc/libshaderc_combined.a
+#         PRIVATE ${VULKAN_SDK}/Lib/spirv-cross/libspirv-cross-cored.a
+#         PRIVATE ${VULKAN_SDK}/Lib/spirv-cross/libspirv-cross-glsld.a
+#     )
+# elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+#     target_link_libraries(${PROJECT_NAME}
+#         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/shaderc/libshaderc_combined.a
+#         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/spirv-cross/libspirv-cross-core.a
+#         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/spirv-cross/libspirv-cross-glsl.a
+#     )
+# elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
+#     target_link_libraries(${PROJECT_NAME}
+#         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/shaderc/libshaderc_combined.a
+#         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/spirv-cross/libspirv-cross-core.a
+#         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/spirv-cross/libspirv-cross-glsl.a
+#     )
+# endif()
+
+
 # Link the Arklumos dll with the glfw, glad, imgui libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glfw)
-	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui glm stb_image entt yaml-cpp imguizmo)
+	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui glm stb_image entt yaml-cpp imguizmo ${VULKAN_LIBS_SPIRV})
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	target_link_libraries(${PROJECT_NAME} glad glfw imgui glm stb_image entt yaml-cpp imguizmo)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)

@@ -56,3 +56,8 @@ ArklumosProfile-Shutdown.json
 
 #Logs files
 *.log
+
+#Python scripts
+__pycache__
+
+Arklumos/vendor/VulkanSDK

@@ -1,5 +1,5 @@
 # Set the minimum required version of CMake
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.24)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Target Linux
@@ -105,24 +105,35 @@ file(GLOB_RECURSE SRC_FILES
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
 
 
-set(VULKAN_SDK C:/VulkanSDK/1.3.216.0)
-# include_directories(${VULKAN_SDK}/Include)
+find_package(Vulkan REQUIRED)
+# message(${VULKAN_SDK})
+# message(${Vulkan_INCLUDE_DIRS})
+# message(${Vulkan_LIBRARIES})
+# message(${Vulkan_FOUND})
+# message(${Vulkan_shaderc_combined_FOUND})
+# message(${Vulkan_SPIRV-Tools_FOUND})
+
 # find_library(SHADERC_LIB shaderc HINTS ${VULKAN_SDK}/Lib)
-# find_library(SPIRV_LIB spirv HINTS ${VULKAN_SDK}/Lib)
+# find_library(SHADERC_SHARED_LIB shaderc_shared HINTS ${VULKAN_SDK}/Lib)
+# find_library(SPIRV_LIB SPIRV HINTS ${VULKAN_SDK}/Lib)
+# find_library(SPIRV_CROSS_LIB spirv-cross-core HINTS ${VULKAN_SDK}/Lib)
+# find_library(SPIRV_CROSS_GLSL_LIB spirv-cross-glsl HINTS ${VULKAN_SDK}/Lib)
+# find_library(SPIRV_TOOLS_LIB SPIRV-Tools HINTS ${VULKAN_SDK}/Lib)
+# message(${SHADERC_LIB})
+# message(${SHADERC_SHARED_LIB})
+# message(${SPIRV_LIB})
+# message(${SPIRV_CROSS_LIB})
+# message(${SPIRV_CROSS_GLSL_LIB})
+# message(${SPIRV_TOOLS_LIB})
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${VULKAN_SDK}/Include
-)
+# set(VULKAN_LIBS_SPIRV
+# 		${VULKAN_SDK}/Lib/shaderc_shared.lib
+# 		${VULKAN_SDK}/Lib/spirv-cross-core.lib
+# 		${VULKAN_SDK}/Lib/spirv-cross-glsl.lib
+# 		${VULKAN_SDK}/Lib/SPIRV-Tools.lib
+# )
 
-set(VULKAN_LIBS_SPIRV
-		${VULKAN_SDK}/Lib/vulkan-1.lib
-		${VULKAN_SDK}/Lib/VkLayer_utils.lib
-		${VULKAN_SDK}/Lib/shaderc_combined.lib
-		${VULKAN_SDK}/Lib/shaderc_shared.lib
-		${VULKAN_SDK}/Lib/spirv-cross-core.lib
-		${VULKAN_SDK}/Lib/spirv-cross-glsl.lib
-		${VULKAN_SDK}/Lib/SPIRV-Tools.lib
-)
+target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
 
 # if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 #     target_link_libraries(${PROJECT_NAME}
@@ -144,11 +155,23 @@ set(VULKAN_LIBS_SPIRV
 #     )
 # endif()
 
+message($ENV{VULKAN_SDK}\\Lib\\shaderc_sharedd.lib)
 
 # Link the Arklumos dll with the glfw, glad, imgui libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glfw)
-	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui glm stb_image entt yaml-cpp imguizmo ${VULKAN_LIBS_SPIRV})
+	# target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES} ${SHADERC_SHARED_LIB} ${SPIRV_LIB} ${SPIRV_CROSS_LIB} ${SPIRV_CROSS_GLSL_LIB} glad glfw opengl32 gdi32 imgui glm stb_image entt yaml-cpp imguizmo)
+	target_link_libraries(${PROJECT_NAME}
+	glad glfw opengl32 gdi32 imgui glm stb_image entt yaml-cpp imguizmo
+            ${Vulkan_LIBRARIES}
+            debug $ENV{VULKAN_SDK}\\Lib\\shaderc_sharedd.lib
+            debug $ENV{VULKAN_SDK}\\Lib\\spirv-cross-cored.lib
+            debug $ENV{VULKAN_SDK}\\Lib\\spirv-cross-glsld.lib
+            debug $ENV{VULKAN_SDK}\\Lib\\SPIRV-Toolsd.lib
+            optimized $ENV{VULKAN_SDK}\\Lib\\shaderc_shared.lib
+            optimized $ENV{VULKAN_SDK}\\Lib\\spirv-cross-core.lib
+            optimized $ENV{VULKAN_SDK}\\Lib\\spirv-cross-glsl.lib
+	)
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	target_link_libraries(${PROJECT_NAME} glad glfw imgui glm stb_image entt yaml-cpp imguizmo)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)

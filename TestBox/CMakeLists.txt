@@ -1,6 +1,8 @@
 # Set the minimum required version of CMake
 cmake_minimum_required(VERSION 3.24)
 
+message("> START Testbox")
+
 ## TESTBOX PART
 # Find the files for the Testbox part
 file(GLOB_RECURSE TESTBOX_SRC_FILES
@@ -12,8 +14,20 @@ file(GLOB_RECURSE TESTBOX_SRC_FILES
 add_executable(Testbox
 		${TESTBOX_SRC_FILES})
 
+set_target_properties(Testbox PROPERTIES
+		ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug/Testbox
+		ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release/Testbox
+		ARCHIVE_OUTPUT_DIRECTORY_DIST ${CMAKE_SOURCE_DIR}/bin/Dist/Testbox
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug/Sandbox
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release/Testbox
+		LIBRARY_OUTPUT_DIRECTORY_DIST ${CMAKE_SOURCE_DIR}/bin/Dist/Testbox
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug/Testbox
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release/Testbox
+		RUNTIME_OUTPUT_DIRECTORY_DIST ${CMAKE_SOURCE_DIR}/bin/Dist/Testbox
+)
+
 # Link the Testbox executable with the Arklumos library
-target_link_libraries(Testbox PRIVATE ${PROJECT_NAME} imgui glm entt yaml-cpp)
+target_link_libraries(Testbox PRIVATE ${PROJECT_NAME})# imgui glm entt yaml-cpp)
 # target_link_directories(Testbox PRIVATE ${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
 
 # Define macros for the Testbox
@@ -27,6 +41,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 set_property(TARGET Testbox PROPERTY POSITION_INDEPENDENT_CODE ON)
+message("> END Testbox")
 
 # set_target_properties(${PROJECT_NAME} Testbox
 #     PROPERTIES

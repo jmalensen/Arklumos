@@ -1,7 +1,9 @@
 # Set the minimum required version of CMake
 cmake_minimum_required(VERSION 3.24)
 
-## ARKLUMOS LIB PART
+project(${PROJECT_NAME} LANGUAGES CXX)
+message("> START Arklumos library")
+
 # Find the files for the Arklumos library
 # (should I target each file one by one ?)
 file(GLOB_RECURSE SRC_FILES
@@ -13,6 +15,20 @@ file(GLOB_RECURSE SRC_FILES
 # (apparently, after test if STATIC is not used CMake is failing :/)
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
 
+set_target_properties(${PROJECT_NAME} PROPERTIES
+			ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug/${PROJECT_NAME}
+			ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release/${PROJECT_NAME}
+			ARCHIVE_OUTPUT_DIRECTORY_DIST ${CMAKE_SOURCE_DIR}/bin/Dist/${PROJECT_NAME}
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug/${PROJECT_NAME}
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release/${PROJECT_NAME}
+			LIBRARY_OUTPUT_DIRECTORY_DIST ${CMAKE_SOURCE_DIR}/bin/Dist/${PROJECT_NAME}
+			RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug/${PROJECT_NAME}
+			RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release/${PROJECT_NAME}
+			RUNTIME_OUTPUT_DIRECTORY_DIST ${CMAKE_SOURCE_DIR}/bin/Dist/${PROJECT_NAME}
+)
+
+# Set the precompiled header file and include it in the Arklumos
+target_precompile_headers(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/Arklumos/src/akpch.h)
 
 # Link the Arklumos dll with the glfw, glad, imgui libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -22,11 +38,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	target_link_libraries(${PROJECT_NAME} PRIVATE glad glfw imgui glm stb_image entt yaml-cpp imguizmo)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)
 endif()
-
-
-# Set the precompiled header file and include it in the Arklumos
-target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/Arklumos/src/akpch.h)
-
 
 # Set the output directory for the Arklumos library
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" OUTPUT_NAME "Arklumos")
@@ -44,21 +55,22 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+message("> END Arklumos library")
 
 
-# if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-# 	message("This is a Debug")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	message("This is a Debug")
 #   target_compile_definitions(Arklumos PUBLIC AK_DEBUG)
 #   target_compile_options(Arklumos PUBLIC -g)
 
-# elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-# 	message("This is a Release")
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+	message("This is a Release")
 #   target_compile_definitions(Arklumos PUBLIC AK_RELEASE)
 #   target_compile_options(Arklumos PUBLIC -O2)
 
-# elseif (CMAKE_BUILD_TYPE STREQUAL "Dist")
-# 	message("This is a Dist")
+elseif (CMAKE_BUILD_TYPE STREQUAL "Dist")
+	message("This is a Dist")
 #   target_compile_definitions(Arklumos PUBLIC AK_DIST)
 #   target_compile_options(Arklumos PUBLIC -O3)
 
-# endif()
+endif()

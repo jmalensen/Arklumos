@@ -31,9 +31,10 @@ run: cmake --build build --config Release
 # For cmake plus ninja (need ninja - choco install ninja for Windows)
 ## Ninja for faster compilation of the project
 Check the CMakeLists.txt for all dependencies if anything needs to be changed
-run first: $ cmake -B build -G Ninja
+run first: $ cmake -B build -G "Ninja Multi-Config" -D CMAKE_BUILD_TYPE=Release
 then: $ cd build
 after, it's only: $ ninja //(-j 10 = depending on how many jobs in parallel, 10 here)
+ninja -j 6
 
 https://ilyas-hamadouche.medium.com/build-your-c-projects-faster-using-ninja-3d7af9b418fc
 https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages

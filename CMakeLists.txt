@@ -1,5 +1,5 @@
 # Set the minimum required version of CMake
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.24)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 message(STATUS "CMake version: ${CMAKE_VERSION}")
@@ -24,7 +24,7 @@ endif()
 
 
 set(PROJECT_NAME Arklumos)
-project(${PROJECT_NAME} VERSION 0.1.0)
+project(ArklumosBase LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -34,12 +34,12 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
 
-# Set the output directory for the built executable and library
-# because I want a specific output folder
-set(outputdir "${CMAKE_CFG_INTDIR}/${CMAKE_SYSTEM_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${outputdir}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${outputdir}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${outputdir}")
+# # Set the output directory for the built executable and library
+# # because I want a specific output folder
+# set(outputdir "${CMAKE_CFG_INTDIR}/${CMAKE_SYSTEM_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
+# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${outputdir}")
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${outputdir}")
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${outputdir}")
 
 # If no CMAKE_BUILD, we set it to Release
 if(NOT CMAKE_BUILD_TYPE)
@@ -88,128 +88,12 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/ImGuizmo)
 
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/src)
 
+# Main targets built by this project
+add_subdirectory(Arklumos)
+add_subdirectory(Arklusis)
+add_subdirectory(Testbox)
 
-## ARKLUMOS LIB PART
-# Find the files for the Arklumos library
-# (should I target each file one by one ?)
-file(GLOB_RECURSE SRC_FILES
-  "${CMAKE_SOURCE_DIR}/Arklumos/src/*.cpp"
-  "${CMAKE_SOURCE_DIR}/Arklumos/src/*.h"
-)
-
-# Add the Arklumos library
-# (apparently, after test if STATIC is not used CMake is failing :/)
-add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
-
-
-# Link the Arklumos dll with the glfw, glad, imgui libraries
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	# (as we are using Windows with mingw64, we need also opengl32 gdi32 for glfw)
-	target_link_libraries(${PROJECT_NAME} glad glfw opengl32 gdi32 imgui glm stb_image entt yaml-cpp imguizmo)
-
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_link_libraries(${PROJECT_NAME} glad glfw imgui glm stb_image entt yaml-cpp imguizmo)# GL dl pthread X11 Xxf86vm Xrandr Xi GLEW)
-endif()
-
-
-# Set the precompiled header file and include it in the Arklumos
-target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Arklumos/src/akpch.h)
-
-# Set the output directory for the Arklumos library
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" OUTPUT_NAME "Arklumos")
-
-# Define macros for the Arklumos library
-# (here to specify it's for windows and to build a dll)
-# GLFW_INCLUDE_NONE is for glad to work with glfw
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	#Define MACROS
-	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_DEBUG GLFW_INCLUDE_NONE)
-
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	#Define MACROS
-	target_compile_definitions(${PROJECT_NAME} PRIVATE AK_BUILD_DLL AK_DEBUG GLFW_INCLUDE_NONE)
-endif()
-
-
-## TESTBOX PART
-# Find the files for the Testbox part
-file(GLOB_RECURSE TESTBOX_SRC_FILES
-  "${CMAKE_SOURCE_DIR}/Testbox/src/*.cpp"
-  "${CMAKE_SOURCE_DIR}/Testbox/src/*.h"
-)
-
-# Add the Testbox executable
-add_executable(Testbox
-		${TESTBOX_SRC_FILES})
-
-# Link the Testbox executable with the Arklumos library
-target_link_libraries(Testbox PRIVATE ${PROJECT_NAME} imgui glm entt yaml-cpp)
-# target_link_directories(Testbox PRIVATE ${CMAKE_SOURCE_DIR}/Arklumos/vendor/imgui)
-
-# Define macros for the Testbox
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	#Define AK_PLATFORM_WINDOWS
-	#target_compile_definitions(Testbox PRIVATE AK_PLATFORM_WINDOWS)
-
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	#Define AK_PLATFORM_LINUX
-	#target_compile_definitions(Testbox PRIVATE AK_PLATFORM_LINUX)
-endif()
-
-
-## ARKLUSIS PART
-# Find the files for the Testbox part
-file(GLOB_RECURSE ARKLUSIS_SRC_FILES
-  "${CMAKE_SOURCE_DIR}/Arklusis/src/*.cpp"
-  "${CMAKE_SOURCE_DIR}/Arklusis/src/*.h"
-)
-
-# Add the Testbox executable
-add_executable(Arklusis
-		${ARKLUSIS_SRC_FILES})
-
-# Link the Arklusis executable with the Arklumos library
-target_link_libraries(Arklusis PRIVATE ${PROJECT_NAME} glm entt imguizmo)
-
-set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
-set_property(TARGET Testbox PROPERTY POSITION_INDEPENDENT_CODE ON)
-set_property(TARGET Arklusis PROPERTY POSITION_INDEPENDENT_CODE ON)
-
-# set_target_properties(${PROJECT_NAME} Testbox
-#     PROPERTIES
-#     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}"
-#     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
-#     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
-#     OUTPUT_NAME_DEBUG "Arklumos_d"
-#     OUTPUT_NAME_RELEASE "Arklumos"
-# )
-
-
-
-# if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-# 	message("This is a Debug")
-#   target_compile_definitions(Arklumos PUBLIC AK_DEBUG)
-#   target_compile_definitions(Testbox PUBLIC AK_DEBUG)
-#   target_compile_options(Arklumos PUBLIC -g)
-#   target_compile_options(Testbox PUBLIC -g)
-
-# elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-# 	message("This is a Release")
-#   target_compile_definitions(Arklumos PUBLIC AK_RELEASE)
-#   target_compile_definitions(Testbox PUBLIC AK_RELEASE)
-#   target_compile_options(Arklumos PUBLIC -O2)
-#   target_compile_options(Testbox PUBLIC -O2)
-
-# elseif (CMAKE_BUILD_TYPE STREQUAL "Dist")
-# 	message("This is a Dist")
-#   target_compile_definitions(Arklumos PUBLIC AK_DIST)
-#   target_compile_definitions(Testbox PUBLIC AK_DIST)
-#   target_compile_options(Arklumos PUBLIC -O3)
-#   target_compile_options(Testbox PUBLIC -O3)
-
-# endif()
-
-
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "Arklusis")
 
 # Still testing
 # if(CMAKE_BUILD_TYPE STREQUAL "Dist")

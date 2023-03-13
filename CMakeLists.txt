@@ -2,6 +2,8 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+message(STATUS "CMake version: ${CMAKE_VERSION}")
+
 # Target Linux
 if(UNIX AND NOT APPLE)
 	message(STATUS "This is a GNU/Linux system")
@@ -12,9 +14,6 @@ if(UNIX AND NOT APPLE)
   set(CMAKE_CXX_COMPILER  "/usr/bin/g++")
 
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-  # set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-  # list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 endif()
 
 # Target Windows
@@ -23,11 +22,16 @@ if(WIN32)
   set(CMAKE_SYSTEM_NAME Windows)
 endif()
 
+
 set(PROJECT_NAME Arklumos)
 project(${PROJECT_NAME} VERSION 0.1.0)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS ON)
 
 
 # Set the output directory for the built executable and library
@@ -84,13 +88,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Arklumos/vendor/ImGuizmo)
 
 include_directories(${CMAKE_SOURCE_DIR}/Arklumos/src)
 
-# if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-#   set(GLFW_ROOT_DIR ${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW)
-#   set(GLFW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW/include)
-#   set(GLFW_LIBRARY ${CMAKE_SOURCE_DIR}/Arklumos/vendor/GLFW)
-
-#   find_package(GLFW REQUIRED)
-# endif()
 
 ## ARKLUMOS LIB PART
 # Find the files for the Arklumos library
@@ -178,39 +175,39 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET Testbox PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET Arklusis PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-set_target_properties(${PROJECT_NAME} Testbox
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
-    OUTPUT_NAME_DEBUG "Arklumos_d"
-    OUTPUT_NAME_RELEASE "Arklumos"
-)
+# set_target_properties(${PROJECT_NAME} Testbox
+#     PROPERTIES
+#     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}"
+#     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+#     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+#     OUTPUT_NAME_DEBUG "Arklumos_d"
+#     OUTPUT_NAME_RELEASE "Arklumos"
+# )
 
 
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	message("This is a Debug")
-  target_compile_definitions(Arklumos PUBLIC AK_DEBUG)
-  target_compile_definitions(Testbox PUBLIC AK_DEBUG)
-  target_compile_options(Arklumos PUBLIC -g)
-  target_compile_options(Testbox PUBLIC -g)
+# if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+# 	message("This is a Debug")
+#   target_compile_definitions(Arklumos PUBLIC AK_DEBUG)
+#   target_compile_definitions(Testbox PUBLIC AK_DEBUG)
+#   target_compile_options(Arklumos PUBLIC -g)
+#   target_compile_options(Testbox PUBLIC -g)
 
-elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-	message("This is a Release")
-  target_compile_definitions(Arklumos PUBLIC AK_RELEASE)
-  target_compile_definitions(Testbox PUBLIC AK_RELEASE)
-  target_compile_options(Arklumos PUBLIC -O2)
-  target_compile_options(Testbox PUBLIC -O2)
+# elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+# 	message("This is a Release")
+#   target_compile_definitions(Arklumos PUBLIC AK_RELEASE)
+#   target_compile_definitions(Testbox PUBLIC AK_RELEASE)
+#   target_compile_options(Arklumos PUBLIC -O2)
+#   target_compile_options(Testbox PUBLIC -O2)
 
-elseif (CMAKE_BUILD_TYPE STREQUAL "Dist")
-	message("This is a Dist")
-  target_compile_definitions(Arklumos PUBLIC AK_DIST)
-  target_compile_definitions(Testbox PUBLIC AK_DIST)
-  target_compile_options(Arklumos PUBLIC -O3)
-  target_compile_options(Testbox PUBLIC -O3)
+# elseif (CMAKE_BUILD_TYPE STREQUAL "Dist")
+# 	message("This is a Dist")
+#   target_compile_definitions(Arklumos PUBLIC AK_DIST)
+#   target_compile_definitions(Testbox PUBLIC AK_DIST)
+#   target_compile_options(Arklumos PUBLIC -O3)
+#   target_compile_options(Testbox PUBLIC -O3)
 
-endif()
+# endif()
 
 
 
